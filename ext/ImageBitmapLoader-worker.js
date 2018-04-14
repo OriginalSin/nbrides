@@ -8,8 +8,7 @@ var log = self.console.log.bind(self.console),
 		// method: 'post',
 		// headers: {'Content-type': 'application/x-www-form-urlencoded'},
 		mode: 'cors',
-		redirect: 'follow'
-		,
+		redirect: 'follow',
 		credentials: 'include'
 	};
 
@@ -26,7 +25,8 @@ var utils = {
 		return dest;
 	},
 	chkProtocol: function(url) {
-		return url.substr(0, _protocol.length) === _protocol ? url : _protocol + url;
+		return url.substr(0, 4) === 'http' ? url : _protocol + url;
+		//return url.substr(0, _protocol.length) === _protocol ? url : _protocol + url;
 	},
 	getFormBody: function(par) {
 		return Object.keys(par).map(function(key) { return encodeURIComponent(key) + '=' + encodeURIComponent(par[key]); }).join('&');
@@ -384,6 +384,8 @@ var vectorTiles = {
 			}
 		}
     },
+    _flatTile: function() {
+			/*
     _flatTile: function(ds, data) {
 		var props = ds.info.properties,
 			attr = utils.getTileAttributes(props),
@@ -430,33 +432,36 @@ var vectorTiles = {
 		out.stat = stat;
 		out.values = data.values;
 log('_flatTile', attr, out)
+			*/
     },
 
-    geoFlatten: function(arr) {  // get flatten geometry
-        var type = geo.type.toLowerCase(),
+    geoFlatten: function() {  // get flatten geometry
+        /*
+		var type = geo.type.toLowerCase(),
             coords = geo.coordinates,
 			out = {type: type, vert: [], rings: [], holes: []},
-			i, len, j, len1;
+			i, len, j, len1. pt;
 
         if (type.indexOf('multi') === -1) {
             coords = [coords];
 		}
-        if (type.indexOf('point') !== -1) {
+        //if (type.indexOf('point') !== -1) {
         } else if (type.indexOf('linestring') !== -1) {
             for (i = 0, len = coords.length; i < len; i++) {
 				out.interval.push(out.vert.length);
-				var pt = vectorTiles.flattenRing(coords[i]);
+				pt = vectorTiles.flattenRing(coords[i]);
 				out.vert = out.vert.concat(pt);
 				out.interval.push(out.vert.length);
             }
         } else if (type.indexOf('polygon') !== -1) {
             for (i = 0, len = coords.length; i < len; i++) {
                 for (j = 0, len1 = coords[i].length; j < len1; j++) {
-                    var pt = vectorTiles.flattenRing(coords[i][j]);
+                    pt = vectorTiles.flattenRing(coords[i][j]);
                 }
             }
         }
 		return out;
+		*/
     },
 
     flattenRing: function(arr) {
