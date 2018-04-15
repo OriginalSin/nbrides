@@ -24,7 +24,7 @@ var Util = {
 		for (var i = 0, len = list.length; i < len; i++) {
 			func(list[i], className || 'ant-modal-mask-hidden');
 		}
-		console.log('_parseList', list);
+		// console.log('_parseList', list);
 	},
 	cmdClose: function() {
 		Util._parseList(Util._needClose, L.DomUtil.addClass);
@@ -54,7 +54,7 @@ var Util = {
 			target.value = 'on';
 			L.DomUtil.addClass(target.parentNode, className);
 		}
-		console.log('cmdCheckbox', ev);
+		// console.log('cmdCheckbox', ev);
 	},
 	cmdForgot: function() {
 		Util.cmdClose();
@@ -220,7 +220,6 @@ var Galer = {
 	},
 	getPage: function(nm, to) {
 		nm = nm || 0;
-		// title = title || '<h3 class="widgetized-title">Photo Catalogue<br><span class="rb-sub-title">Browse through the Russian Bride Photo Catalogue</span></h3>';
 		var opt = {
 			options: {
 				//credentials: false,
@@ -242,7 +241,7 @@ var Galer = {
 				pagination = Galer.getPagination(Number(galer.from), Number(galer.count.cnt)),
 				arr = galer.arr.slice(0, pagination ? 8 : 4);
 
-			if (pagination) out.push(pagination);
+			// if (pagination) out.push(pagination);
 			Galer.galer = {};
 			arr.forEach(function(it) {
 				it.pName = it.fname.charAt(0).toUpperCase() + it.fname.slice(1) + ' ' + it.sname.charAt(0).toUpperCase() + '.';
@@ -256,14 +255,12 @@ var Galer = {
 				Galer.galer[it.onum] = it;
 				// console.log('__', st);
 			});
-			if (pagination) out.push(pagination);
+			// if (pagination) out.push(pagination);
 			cont.innerHTML = out.join('\n');
-// if (to) {
-	// Galer._showItem(to);
-// }
-if (Util.urlParams.par.to) {
-	Galer._showItem(Util.urlParams.par.to);
-}
+
+			if (Util.urlParams.par.to) {
+				Galer._showItem(Util.urlParams.par.to);
+			}
 		});
 	},
 	galer: {},
@@ -279,7 +276,7 @@ if (Util.urlParams.par.to) {
 			var node1 = list[i];
 			node1.src = 'http://russianbrides.com.au/' + zn;
 		}
-console.log('_ _putImageSrc __', it);
+// console.log('_ _putImageSrc __', it);
 	},
 	_putItem: function(it) {
 		var node = Galer.rbItemDetail,
@@ -292,7 +289,6 @@ console.log('_ _putImageSrc __', it);
 				list[i].innerHTML = zn;
 			}
 		});
-console.log('_ _putItem __', it);
 	},
 	_showItem: function(onum) {
 		if (!Galer.rbPhotoCatalog) {
@@ -338,10 +334,10 @@ console.log('_ _putItem __', it);
 			func(it, 'active');
 			func(document.getElementById(name), 'active');
 		}
-console.log('_clickTab __', tab);
+// console.log('_clickTab __', tab);
 	},
 	onErrorSrc: function(it) {
-console.log('onErrorSrc __', it);
+// console.log('onErrorSrc __', it);
 	}
 };
 
@@ -365,10 +361,9 @@ for (var i = 0, list = Util.getNodes('rb-pagination-row'), len = list.length; i 
 window.B.Galer = Galer;
 
 var Menu = {
-	// rbMenuContent: '',
 	rbMenuContent: null,
 	toogle: function(it) {
-console.log('toogle __', it);
+// console.log('toogle __', it);
 		if (!Menu.rbMenuContent) {
 			Menu.rbMenuContent = Util.getNodes('rb-menu-content')[0];
 		}
