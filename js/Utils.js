@@ -10,6 +10,15 @@ var Util = {
 	getNode: function(name, fromNode) {
 		return Util.getNodes(name, fromNode)[0];
 	},
+	toggleClass: function(node, name) {
+		var isExist = L.DomUtil.hasClass(node, name);
+		if (isExist) {
+			L.DomUtil.removeClass(node, name);
+		} else {
+			L.DomUtil.addClass(node, name);
+		}
+		return !isExist;
+	},
 	_needClose: [],
 	_parseList: function(list, func, className) {
 		for (var i = 0, len = list.length; i < len; i++) {
@@ -58,6 +67,19 @@ var Util = {
 		_maps: {}
 	}
 };
+var arr = location.search.split('&'),
+	len = arr.length,
+	out = {par: {}};
+if (arr[0].indexOf('?') === 0) arr[0] = arr[0].substr(1);
+if (arr[len - 1].indexOf('#') === 0) {
+	out.achor = arr[len - 1].substr(1);
+	len--;
+}
+for (var i = 0; i < len; i++) {
+	var pv = arr[i].split('=');
+	out.par[pv[0]] = pv[1];
+}
+Util.urlParams = out;
 
 ['cmdRegister', 'cmdSign', 'cmdForgot', 'cmdClose', 'cmdSave', 'cmdCheckbox'].forEach(function(name) {
 	for (var i = 0, list = Util.getNodes(name), len = list.length; i < len; i++) {
@@ -194,10 +216,11 @@ var Galer = {
 		for (var i = 0, list = Util.getNodes('rb-pagination-row'), len = list.length; i < len; i++) {
 			list[i].innerHTML = out;
 		}
+		return len;
 	},
-	getPage: function(nm, title) {
+	getPage: function(nm, to) {
 		nm = nm || 0;
-		title = title || '<h3 class="widgetized-title">Photo Catalogue<br><span class="rb-sub-title">Browse through the Russian Bride Photo Catalogue</span></h3>';
+		// title = title || '<h3 class="widgetized-title">Photo Catalogue<br><span class="rb-sub-title">Browse through the Russian Bride Photo Catalogue</span></h3>';
 		var opt = {
 			options: {
 				//credentials: false,
@@ -210,24 +233,20 @@ var Galer = {
 				byAge: 0
 			}
 		};
+		if (Util.urlParams.par.to) opt.params.nw = Util.urlParams.par.to;
 		var cont = Util.getNodes('galerList')[0];
 		
 		return L.gmx.getJSON(prefixURL, opt).then(function(json) {
-			// console.log('ddd', json);
 			var out = [],
 				galer = json.res.galer,
-				cnt = Number(galer.count.cnt),
-				b = Number(galer.from),
-				pagination = Galer.getPagination(b, cnt),
-				ep = Math.floor((cnt - b)/8),
-				len = ep > 7 ? 7 : ep,
-				arr = galer.arr;
+				pagination = Galer.getPagination(Number(galer.from), Number(galer.count.cnt)),
+				arr = galer.arr.slice(0, pagination ? 8 : 4);
 
-			out.push(pagination);
+			if (pagination) out.push(pagination);
 			Galer.galer = {};
 			arr.forEach(function(it) {
 				it.pName = it.fname.charAt(0).toUpperCase() + it.fname.slice(1) + ' ' + it.sname.charAt(0).toUpperCase() + '.';
-				it.age = new Date().getFullYear() - new Date(it.yy, it.month - 1).getFullYear();
+				it.age = new Date().getFullYear() - new Date(it.yy || it.pdata.yy, (it.mm || it.pdata.mm) - 1).getFullYear();
 				it.gender = opt.params.usr;
 				var st = Galer.templ;
 				st = st.replace(/_(\w+)_/g, function(match, contents, offset, input_string) {
@@ -237,20 +256,75 @@ var Galer = {
 				Galer.galer[it.onum] = it;
 				// console.log('__', st);
 			});
-			out.push(pagination);
+			if (pagination) out.push(pagination);
 			cont.innerHTML = out.join('\n');
+// if (to) {
+	// Galer._showItem(to);
+// }
+if (Util.urlParams.par.to) {
+	Galer._showItem(Util.urlParams.par.to);
+}
 		});
 	},
 	galer: {},
 	templItem: '',
-	_clickItem: function(ev) {
-		var node = ev.target,
-			onum = node.attributes.onum && node.attributes.onum.value,
+	rbPhotoCatalog: null,
+	rbItemDetail: null,
+	_putImageSrc: function(it) {
+		var node = Galer.rbItemDetail,
+			zn = it._jpg2 || it.pdata._jpg2;
+
+		var list = Util.getNodes('rb-src-jpg2', node);
+		for (var i = 0, len = list.length; i < len; i++) {
+			var node1 = list[i];
+			node1.src = 'http://russianbrides.com.au/' + zn;
+		}
+console.log('_ _putImageSrc __', it);
+	},
+	_putItem: function(it) {
+		var node = Galer.rbItemDetail,
+			arr = Object.keys(it.pdata).concat(Object.keys(it));
+
+		arr.forEach(function(key) {
+			var list = Util.getNodes('rb-item-' + key, node),
+				zn = it[key] || it.pdata[key];
+			for (var i = 0, len = list.length; i < len; i++) {
+				list[i].innerHTML = zn;
+			}
+		});
+console.log('_ _putItem __', it);
+	},
+	_showItem: function(onum) {
+		if (!Galer.rbPhotoCatalog) {
+			Galer.rbPhotoCatalog = Util.getNodes('rb-photo-catalog')[0];
+			Galer.rbItemDetail = Util.getNodes('rb-item-detail')[0];
+		}
+		if (!Galer.rbPhotoCatalog) {
+			location.href = 'catalogue.html?to=' + onum;
+			// Galer.getPage(null, onum);
+			return true;
+		}
+		var rbPhotoCatalog = Galer.rbPhotoCatalog,
+			rbItemDetail = Galer.rbItemDetail,
 			it = Galer.galer[onum];
 		if (it) {
-			//return;
+			Galer._putItem(it);
+			Galer._putImageSrc(it);
+			L.DomUtil.addClass(rbPhotoCatalog, 'collapse');
+			L.DomUtil.removeClass(rbItemDetail, 'collapse');
+		} else {
+			if (Util.urlParams.par.to) {
+				location.href = 'catalogue.html';
+				return true;
+			}
+			L.DomUtil.addClass(rbItemDetail, 'collapse');
+			L.DomUtil.removeClass(rbPhotoCatalog, 'collapse');
 		}
-console.log('_clickItem__', onum, it);
+	},
+	_clickItem: function(ev) {
+		var node = ev.target,
+			onum = node.attributes.onum && node.attributes.onum.value;
+		Galer._showItem(onum);
 	},
 	_clickTab: function(ev) {
 		var node = ev.target,
@@ -265,19 +339,47 @@ console.log('_clickItem__', onum, it);
 			func(document.getElementById(name), 'active');
 		}
 console.log('_clickTab __', tab);
+	},
+	onErrorSrc: function(it) {
+console.log('onErrorSrc __', it);
 	}
 };
-var itemsCont = Util.getNodes('galerList')[0];
+
+var itemsCont = Util.getNodes('rb-back-button')[0];
 if (itemsCont) {
 	L.DomEvent.on(itemsCont, 'click', Galer._clickItem);
 }
-var _clickTab = Util.getNodes('rb-tab-nav')[0];
-if (_clickTab) {
-	L.DomEvent.on(_clickTab, 'click', Galer._clickTab);
+itemsCont = Util.getNodes('galerList')[0];
+if (itemsCont) {
+	L.DomEvent.on(itemsCont, 'click', Galer._clickItem);
+}
+itemsCont = Util.getNodes('rb-tab-nav')[0];
+if (itemsCont) {
+	L.DomEvent.on(itemsCont, 'click', Galer._clickTab);
 }
 
 for (var i = 0, list = Util.getNodes('rb-pagination-row'), len = list.length; i < len; i++) {
 	L.DomEvent.on(list[i], 'click', Galer._clickPage);
 }
+
 window.B.Galer = Galer;
+
+var Menu = {
+	// rbMenuContent: '',
+	rbMenuContent: null,
+	toogle: function(it) {
+console.log('toogle __', it);
+		if (!Menu.rbMenuContent) {
+			Menu.rbMenuContent = Util.getNodes('rb-menu-content')[0];
+		}
+		Util.toggleClass(Menu.rbMenuContent, 'collapse');
+	}
+};
+window.B.Menu = Menu;
+
+itemsCont = Util.getNodes('rb-menu-button')[0];
+if (itemsCont) {
+	L.DomEvent.on(itemsCont, 'click', Menu.toogle);
+}
+
 }();

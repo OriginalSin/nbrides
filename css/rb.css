@@ -1,12 +1,7 @@
-.rb-main {
-	display: table;
-	width: 100%;
+.rb-main .collapse {
+	display: none;
 }
-
-.rb-widgetized-title {
-	margin-left: 15px;
-	margin-right: 15px;
-}
+/*
 .rb-widgetized-title:after {
     background-color: #20b38d;
     content: '';
@@ -14,6 +9,7 @@
     height: 3px;
     margin-top: 15px;
 }
+*/
 .rb-row-box {
 	background-color: lightgrey;
 	padding: 10px;
@@ -34,6 +30,12 @@
 .rb-pagination-row .ant-table-pagination {
 	text-align: center;
 	float: none;
+}
+.rb-pagination-row li {
+	background-color: lightgray;
+}
+.rb-pagination-row li.ant-pagination-item-active {
+	background-color: #108ee9;
 }
 .rb-image-zoom {
     cursor: pointer;
@@ -94,4 +96,68 @@
     margin: 4px 0px 0px -4px;
     position: absolute;
     top: -5px;
+}
+
+.rb-main div {
+	display: block;
+}
+.rb-main .header-wrapper {
+	display: block;
+}
+.rb-float-left {
+	float: left;
+}
+.rb-float-right {
+	float: right;
+}
+.cmdSign {
+	margin-left: 10px;
+}
+.rb-menu-button {
+    margin-top: 18px;
+}
+
+.rb-widgetized-title {
+	margin-left: 15px;
+	margin-right: 15px;
+}
+
+.rb-mtop-10 {
+    margin-top: 10px;
+}
+
+.rb-vert-10, .rb-cont-sign {
+    padding-bottom: 10px;
+    padding-top: 10px;
+}
+.rb-back-button {
+    position: absolute;
+    right: 0px;
+}
+.rb-back-button .ant-pagination-prev a:after {
+	font-size: 20px;
+	content: "Catalogue";
+}
+.rb-item {
+	font-weight: bold;
+	white-space: nowrap;
+}
+.rb-item-you, .rb-item-him {
+	font-weight: bold;
+}
+.rb-line-after:after {
+    background-color: #20b38d;
+    content: '';
+    display: block;
+    height: 3px;
+    margin-top: 15px;
+    position: absolute;
+    width: 100%;
+}
+.rb-width80 {
+    width: 80%;
+}
+.rb-prev:after {
+    /* content: "\E620"; */
+    /* display: block; */
 }
