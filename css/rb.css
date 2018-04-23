@@ -161,3 +161,34 @@
     /* content: "\E620"; */
     /* display: block; */
 }
+.tab-pane .col-md-6 {
+    margin-top: 4px;
+	/*
+	max-width: 194px;
+	*/
+}
+.tab-pane .col-md-6 a {
+    text-align: left;
+}
+.rb-postal, .rb-postal .ant-modal-header {
+	background: lightgrey;
+}
+.rb-postal table {
+    width: 100%;
+}
+.rb-address {
+	background-color: #fff;
+    position: relative;
+}
+.rb-address img {
+    position: absolute;
+    right: 0px;
+    top: 10px;
+}
+.herAddress .title {
+    color: blue;
+    font-size: 14pt;
+}
+.herAddress .profile-num {
+	margin-bottom: 4px;
+}

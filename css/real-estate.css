@@ -9301,12 +9301,16 @@ body.layout-boxed {
 
 /* line 25, ../../scss/helpers/_structure.scss */
 ::selection {
+  /*
   background: rgba(32, 179, 141, 0.2);
+  */
 }
 
 /* line 29, ../../scss/helpers/_structure.scss */
 ::-moz-selection {
-  background: rgba(32, 179, 141, 0.3);
+  /*
+  background: rgba(32, 179, 141, 0.2);
+  */
 }
 
 /* line 33, ../../scss/helpers/_structure.scss */

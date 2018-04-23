@@ -2,6 +2,10 @@
     'use strict';
 
 window.B = window.B || {};
+var host = '//russianbrides.com.au',
+	cgiURLauth = host + '/cgi/publ/auth.pl',
+	cgiURL = host + '/cgi/publ/nserv.pl';
+// var prefixURL = 'http://russianbrides.com.au/cgi/nserv.pl';
 
 var Util = {
 	getNodes: function(name, fromNode) {
@@ -29,6 +33,13 @@ var Util = {
 	cmdClose: function() {
 		Util._parseList(Util._needClose, L.DomUtil.addClass);
 		// console.log('cmdClose', ev);
+	},
+	cmdHerAddress: function(ev) {
+		Util.cmdClose();
+		var node = Util.getNode('herAddress');
+		Util._needClose = [Util.getNode('ant-modal-mask', node), Util.getNode('ant-modal-wrap', node)];
+		Util._parseList(Util._needClose, L.DomUtil.removeClass);
+		B.Galer.showFullAddress();
 	},
 	cmdRegister: function(ev) {
 		Util.cmdClose();
@@ -81,7 +92,7 @@ for (var i = 0; i < len; i++) {
 }
 Util.urlParams = out;
 
-['cmdRegister', 'cmdSign', 'cmdForgot', 'cmdClose', 'cmdSave', 'cmdCheckbox'].forEach(function(name) {
+['cmdHerAddress', 'cmdRegister', 'cmdSign', 'cmdForgot', 'cmdClose', 'cmdSave', 'cmdCheckbox'].forEach(function(name) {
 	for (var i = 0, list = Util.getNodes(name), len = list.length; i < len; i++) {
 		L.DomEvent.on(list[i], 'click', Util[name] || console.log, Util);
 	}
@@ -89,8 +100,6 @@ Util.urlParams = out;
 
 window.B.Util = Util;
 
-var prefixURL = 'http://russianbrides.com.au/cgi/publ/nserv.pl';
-// var prefixURL = 'http://russianbrides.com.au/cgi/nserv.pl';
 var Galer = {
 	templ: '<div class="col-sm-4 col-md-3">\
 				<div class="box image-zoom">\
@@ -106,7 +115,7 @@ var Galer = {
 								</tr></tbody>\
 							</table>\
 						</div>\
-						<img src="http://russianbrides.com.au/__jpg2_" alt="" onerror="this.src=\'./css/img/blank_gender_.jpg\'; this.onerror=\'\';" class="rb-image-zoom" onum="_onum_" gender="_gender_">\
+						<img src="' + host + '/__jpg2_" alt="" onerror="this.src=\'./css/img/blank_gender_.jpg\'; this.onerror=\'\';" class="rb-image-zoom" onum="_onum_" gender="_gender_">\
 					</div>\
 					<div class="box-body">\
 						<h2 class="box-title-plain">_pName_</h2>\
@@ -234,10 +243,25 @@ var Galer = {
 		};
 		if (Util.urlParams.par.to) opt.params.nw = Util.urlParams.par.to;
 		var cont = Util.getNodes('galerList')[0];
+L.gmx.getJSON(cgiURLauth, {
+	params: {json:1, uAttr:1, usr:'w'},
+	options: {json:1, type:'json'}
+}).then(function(json) {
+	console.log('fdfdfdf', json);
+});
 		
-		return L.gmx.getJSON(prefixURL, opt).then(function(json) {
+		// return L.gmxUtil.requestJSONP(cgiURL, opt.params, {callbackParamName: 'callback'}).then(function(json) {
+		return L.gmx.getJSON(cgiURL, opt).then(function(json) {
+			var galer = json.galer;
+			if (json.res) {
+				if (typeof(json.res) === 'string') {
+					var txt = JSON.parse(json.res);
+					json.res = txt;
+				}
+				galer = json.res.galer;
+			}
 			var out = [],
-				galer = json.res.galer,
+				//galer = json.res.galer,
 				pagination = Galer.getPagination(Number(galer.from), Number(galer.count.cnt)),
 				arr = galer.arr.slice(0, pagination ? 8 : 4);
 
@@ -247,6 +271,10 @@ var Galer = {
 				it.pName = it.fname.charAt(0).toUpperCase() + it.fname.slice(1) + ' ' + it.sname.charAt(0).toUpperCase() + '.';
 				it.age = new Date().getFullYear() - new Date(it.yy || it.pdata.yy, (it.mm || it.pdata.mm) - 1).getFullYear();
 				it.gender = opt.params.usr;
+				it.fullname = it.fname + ' ' + it.sname;
+				it.address = it.pdata.addru + '<br>' + it.fullname;
+				it.talk = host + '/talk.html?usr=' + it.gender + '&onum=' + it.onum + '&ns=' + it.onum;
+				
 				var st = Galer.templ;
 				st = st.replace(/_(\w+)_/g, function(match, contents, offset, input_string) {
 					return it[contents] || it.pdata[contents];
@@ -267,20 +295,37 @@ var Galer = {
 	templItem: '',
 	rbPhotoCatalog: null,
 	rbItemDetail: null,
-	_putImageSrc: function(it) {
-		var node = Galer.rbItemDetail,
-			zn = it._jpg2 || it.pdata._jpg2;
+	_putImageSrc: function(it, node, nm) {
+		nm = nm || 2;
+		node = node || Galer.rbItemDetail;
+		var jpg = '_jpg' + nm,
+			zn = it[jpg] || it.pdata[jpg];
 
-		var list = Util.getNodes('rb-src-jpg2', node);
+		var list = Util.getNodes('rb-src-jpg' + nm, node);
 		for (var i = 0, len = list.length; i < len; i++) {
 			var node1 = list[i];
-			node1.src = 'http://russianbrides.com.au/' + zn;
+			node1.src = host + '/' + zn;
 		}
 // console.log('_ _putImageSrc __', it);
 	},
-	_putItem: function(it) {
-		var node = Galer.rbItemDetail,
-			arr = Object.keys(it.pdata).concat(Object.keys(it));
+	_putHref: function(zn, className, node) {
+		node = node || Galer.rbItemDetail;
+
+		var list = Util.getNodes(className, node);
+		for (var i = 0, len = list.length; i < len; i++) {
+			var node1 = list[i];
+			if (className === 'rb-href-url') {
+				node1.href = zn;
+			} else if (className === 'rb-href-email') {
+				node1.href = 'mailto:' + zn;
+				node1.innerHTML = zn;
+			}
+		}
+// console.log('_ _putImageSrc __', it);
+	},
+	_putItem: function(it, node) {
+		node = node || Galer.rbItemDetail;
+		var arr = Object.keys(it.pdata).concat(Object.keys(it));
 
 		arr.forEach(function(key) {
 			var list = Util.getNodes('rb-item-' + key, node),
@@ -290,11 +335,26 @@ var Galer = {
 			}
 		});
 	},
+	_curNum: null,
+	getItem: function(num) {
+		return Galer.galer[num || Galer._curNum];
+	},
+	showFullAddress: function(num) {
+		// console.log('cmdRegister', Util._needClose);
+		var it = Galer.galer[num || Galer._curNum],
+			herAddress = Util.getNodes('herAddress')[0];
+		Galer._putItem(it, herAddress);
+		Galer._putImageSrc(it, herAddress, 1);
+		Galer._putHref(it.talk, 'rb-href-url', herAddress);
+		Galer._putHref(it.email, 'rb-href-email', herAddress);
+		console.log(it);
+	},
 	_showItem: function(onum) {
 		if (!Galer.rbPhotoCatalog) {
 			Galer.rbPhotoCatalog = Util.getNodes('rb-photo-catalog')[0];
 			Galer.rbItemDetail = Util.getNodes('rb-item-detail')[0];
 		}
+		Galer._curNum = onum;
 		if (!Galer.rbPhotoCatalog) {
 			location.href = 'catalogue.html?to=' + onum;
 			// Galer.getPage(null, onum);
