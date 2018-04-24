@@ -30,6 +30,38 @@ var Util = {
 		}
 		// console.log('_parseList', list);
 	},
+	cmdSave: function(ev) {
+		// Util._parseList(Util._needClose, L.DomUtil.addClass);
+		var node = ev.target,
+			cmd = node.getAttribute('data-key'),
+			formName = cmd + '-form',
+			form = Util.getNode(cmd + '-form'),
+			par = {cmd: cmd, usr: 'w'};
+		if (form && form.length) {
+			for (var i = 0, len = form.length; i < len; i++) {
+				var it = form[i],
+					key = it.getAttribute('data-key');
+				par[key] = it.value;
+			}
+			if (cmd === 'forgot') {
+				par.uForgot = 1;
+			}
+			return L.gmxUtil.requestJSONP(cgiURLauth, par, {callbackParamName: 'callback'}).then(function(json) {
+				// return L.gmx.getJSON(cgiURL, opt).then(function(json) {
+console.log('cmd', cmd, json);
+				// var galer = json.galer;
+				// if (json.res) {
+				// 	if (typeof(json.res) === 'string') {
+				// 		var txt = JSON.parse(json.res);
+				// 		json.res = txt;
+				// 	}
+				// 	galer = json.res.galer;
+				// }
+			});
+		}
+	// forgot
+		console.log('cmdSave', cmd, formName, form, par);
+	},
 	cmdClose: function() {
 		Util._parseList(Util._needClose, L.DomUtil.addClass);
 		// console.log('cmdClose', ev);
@@ -250,8 +282,8 @@ L.gmx.getJSON(cgiURLauth, {
 	console.log('fdfdfdf', json);
 });
 		
-		// return L.gmxUtil.requestJSONP(cgiURL, opt.params, {callbackParamName: 'callback'}).then(function(json) {
-		return L.gmx.getJSON(cgiURL, opt).then(function(json) {
+		return L.gmxUtil.requestJSONP(cgiURL, opt.params, {callbackParamName: 'callback'}).then(function(json) {
+		// return L.gmx.getJSON(cgiURL, opt).then(function(json) {
 			var galer = json.galer;
 			if (json.res) {
 				if (typeof(json.res) === 'string') {
