@@ -4,10 +4,15 @@
 window.B = window.B || {};
 var host = '//russianbrides.com.au',
 	cgiURLauth = host + '/cgi/publ/auth.pl',
-	cgiURL = host + '/cgi/publ/nserv.pl';
+	cgiURL = host + '/cgi/publ/nserv.pl',
+	auth = {};
 // var prefixURL = 'http://russianbrides.com.au/cgi/nserv.pl';
 
 var Util = {
+	reg: {
+		email: /^[-._a-z0-9]+@(?:[a-z0-9][-a-z0-9]+\\.)+[a-z]{2,6}$/,
+		test: /^[\\w]+$/
+	},
 	getNodes: function(name, fromNode) {
 		return (fromNode || document).getElementsByClassName(name);
 	},
@@ -31,7 +36,7 @@ var Util = {
 		// console.log('_parseList', list);
 	},
 	cmdSave: function(ev) {
-		// Util._parseList(Util._needClose, L.DomUtil.addClass);
+		// value.search(reg) === -1
 		var node = ev.target,
 			cmd = node.getAttribute('data-key'),
 			formName = cmd + '-form',
@@ -43,23 +48,28 @@ var Util = {
 					key = it.getAttribute('data-key');
 				par[key] = it.value;
 			}
-			if (cmd === 'forgot') {
+			if (cmd === 'login') {
+				par.uAttr = 1;
+			} else if (cmd === 'forgot') {
 				par.uForgot = 1;
 			}
+
 			return L.gmxUtil.requestJSONP(cgiURLauth, par, {callbackParamName: 'callback'}).then(function(json) {
-				// return L.gmx.getJSON(cgiURL, opt).then(function(json) {
+				var pt = json.AUTH;
 console.log('cmd', cmd, json);
-				// var galer = json.galer;
-				// if (json.res) {
-				// 	if (typeof(json.res) === 'string') {
-				// 		var txt = JSON.parse(json.res);
-				// 		json.res = txt;
-				// 	}
-				// 	galer = json.res.galer;
-				// }
+				if (cmd === 'login') {
+					Util._toggleLogin(pt.err ? null : pt);
+				} else if (cmd === 'forgot') {
+					if (pt.err) {
+						var explain = Util.getNode('ant-form-explain', node.parentNode.parentNode.parentNode);
+						L.DomUtil.removeClass(explain, 'collapse');
+						explain.innerHTML = 'Error: Type in your E-mail you used for registration';
+					} else {
+						Util.cmdSign(null, par.email);
+					}
+				}
 			});
 		}
-	// forgot
 		console.log('cmdSave', cmd, formName, form, par);
 	},
 	cmdClose: function() {
@@ -81,11 +91,39 @@ console.log('cmd', cmd, json);
 		// console.log('cmdRegister', Util._needClose);
 		// console.log(node);
 	},
-	cmdSign: function() {
+	cmdSign: function(ev, email) {
 		Util.cmdClose();
 		var node = Util.getNode('signDialog');
 		Util._needClose = [Util.getNode('ant-modal-mask', node), Util.getNode('ant-modal-wrap', node)];
 		Util._parseList(Util._needClose, L.DomUtil.removeClass);
+		if (email) {
+			Util.getNode('error-title', node).innerHTML = 'Check your E-mail: ' + email + ' and Sign In';
+		}
+		
+	},
+	_toggleLogin: function(profile) {
+		var nodeOff = Util.getNode('rb-signed-off'),
+			nodeOn = Util.getNode('rb-signed-on');
+		if (profile) {
+			auth = profile;
+			L.DomUtil.removeClass(nodeOn, 'collapse');
+			L.DomUtil.addClass(nodeOff, 'collapse');
+		} else {
+			auth = {};
+			L.DomUtil.removeClass(nodeOff, 'collapse');
+			L.DomUtil.addClass(nodeOn, 'collapse');
+		}
+		Util.cmdClose();
+	},
+	cmdSignOut: function() {
+		Util.cmdClose();
+		L.gmx.getJSON(cgiURLauth, {
+			params: {logout:1, json:1, usr:'w'},
+			options: {type:'json'}
+		}).then(function(json) {
+			Util._toggleLogin();
+			console.log('cmdSignOut', json);
+		});
 	},
 	cmdCheckbox: function(ev) {
 		var target = ev.target,
@@ -98,6 +136,62 @@ console.log('cmd', cmd, json);
 			L.DomUtil.addClass(target.parentNode, className);
 		}
 		// console.log('cmdCheckbox', ev);
+	},
+	_inputError: function(error, node) {
+		// var errors = {
+		// 	email: 'The input is not valid E-mail!'
+		// }
+		L.DomUtil.addClass(node, 'has-error');
+		var explain = Util.getNode('ant-form-explain', node);
+		if (explain) {
+			L.DomUtil.removeClass(explain, 'collapse');
+		}
+		
+		// console.log('_inputError', node, error);
+	},
+	onInputChange: function(ev) {
+		if (Util.__onInputChangeTimer) { clearTimeout(Util.__onInputChangeTimer); }
+		Util.__onInputChangeTimer = setTimeout(Util._onInputChange.bind(this, ev), 250);
+	},
+	_onInputChange: function(ev) {
+		var target = ev.target,
+			parentNode = target.parentNode.parentNode,
+			val = target.value.trim(),
+			type = target.getAttribute('data-key'),
+			res = null;
+		if (type === 'onum') {
+			if (val.indexOf ('@') > 0)  {	// email
+				type = 'email';
+			} else {
+				if (typeof(val) === 'string') {
+					var arr = val.match(/(\d+)/);
+					if (!arr) {
+						Util._inputError('email', parentNode);
+						return;
+					} else {
+						val = Number(arr[0]);
+					}
+				}
+			}
+		}
+		if (type === 'email') {
+			if (val.length > 80 || val.indexOf ('|') > -1 || val.indexOf ('@') === -1 || val.indexOf ('.') === -1) {
+				Util._inputError('email', parentNode);
+				return;
+			}
+		} else if (type === 'pass') {
+			if (val.length > 80) {
+				Util._inputError('pass', parentNode);
+				return;
+			}
+		}
+		L.DomUtil.removeClass(parentNode, 'has-error');
+		L.DomUtil.addClass(parentNode, 'has-success');
+		var explain = Util.getNode('ant-form-explain', parentNode);
+		if (explain) {
+			L.DomUtil.addClass(explain, 'collapse');
+		}
+		// console.log('onInputChange', type, val, res);
 	},
 	cmdForgot: function() {
 		Util.cmdClose();
@@ -124,10 +218,24 @@ for (var i = 0; i < len; i++) {
 }
 Util.urlParams = out;
 
-['cmdHerAddress', 'cmdRegister', 'cmdSign', 'cmdForgot', 'cmdClose', 'cmdSave', 'cmdCheckbox'].forEach(function(name) {
+for (var i = 0, list = Util.getNodes('ant-input'), len = list.length; i < len; i++) {
+	var target = list[i],
+		type = target.getAttribute('data-key');
+	if (type === 'onum') { L.DomEvent.on(target, 'change', Util.onInputChange, Util); }
+	L.DomEvent.on(target, 'keypress', Util.onInputChange, Util);
+}
+
+['cmdHerAddress', 'cmdRegister', 'cmdSign', 'cmdSignOut', 'cmdForgot', 'cmdClose', 'cmdSave', 'cmdCheckbox'].forEach(function(name) {
 	for (var i = 0, list = Util.getNodes(name), len = list.length; i < len; i++) {
 		L.DomEvent.on(list[i], 'click', Util[name] || console.log, Util);
 	}
+});
+L.gmx.getJSON(cgiURLauth, {
+	params: {json:1, uAttr:1, usr:'w'},
+	options: {type:'json'}
+}).then(function(json) {
+	var pt = json.res.AUTH;
+	Util._toggleLogin(pt.err ? null : pt);
 });
 
 window.B.Util = Util;
@@ -275,13 +383,7 @@ var Galer = {
 		};
 		if (Util.urlParams.par.to) opt.params.nw = Util.urlParams.par.to;
 		var cont = Util.getNodes('galerList')[0];
-L.gmx.getJSON(cgiURLauth, {
-	params: {json:1, uAttr:1, usr:'w'},
-	options: {json:1, type:'json'}
-}).then(function(json) {
-	console.log('fdfdfdf', json);
-});
-		
+
 		return L.gmxUtil.requestJSONP(cgiURL, opt.params, {callbackParamName: 'callback'}).then(function(json) {
 		// return L.gmx.getJSON(cgiURL, opt).then(function(json) {
 			var galer = json.galer;
@@ -304,7 +406,11 @@ L.gmx.getJSON(cgiURLauth, {
 				it.age = new Date().getFullYear() - new Date(it.yy || it.pdata.yy, (it.mm || it.pdata.mm) - 1).getFullYear();
 				it.gender = opt.params.usr;
 				it.fullname = it.fname + ' ' + it.sname;
-				it.address = it.pdata.addru + '<br>' + it.fullname;
+				var addru = it.pdata.addru;
+				if (!addru) {
+					addru = it.pdata.country + ', ' + it.pdata.city;
+				}
+				it.address = addru + '<br>' + it.fullname;
 				it.talk = host + '/talk.html?usr=' + it.gender + '&onum=' + it.onum + '&ns=' + it.onum;
 				
 				var st = Galer.templ;

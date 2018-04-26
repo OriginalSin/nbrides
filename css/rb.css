@@ -1,6 +1,12 @@
 .rb-main .collapse {
 	display: none;
 }
+.rb-pointer {
+	cursor: pointer;
+	color: gray;
+    font-family: "Exo 2", sans-serif;
+	padding-left: 2px;
+}
 /*
 .rb-widgetized-title:after {
     background-color: #20b38d;

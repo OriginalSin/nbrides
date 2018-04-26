@@ -37,10 +37,16 @@
 								<label class="ant-radio-button-wrapper"><span class="ant-radio-button"><input type="radio" class="ant-radio-button-input" value="on"><span class="ant-radio-button-inner"></span></span><span><img class="language-flag" src="css/img/ru.png" alt="ru" title="Russia"></span>
 								</label>
 							</div>
-							<div class="rb-cont-sign rb-float-right">
+							<div class="rb-cont-sign rb-float-right rb-signed-off">
 								<span class="cmdRegister rb-float-left"><div class="fa fa-users"><span>Register</span></div></span>
 								<span class="cmdSign rb-float-right"><div class="fa fa-sign-in"><span>Login</span></div></span>
 							</div>
+							<ul class="header-submenu pull-right rb-signed-on collapse">
+								<li>
+									<span class="fa fa-sign-out cmdSignOut"><span class="rb-pointer" title="Sign Out">Logout</span></span>
+									<span class="mail-User-Picture js-user-picture is-updated rb-edit-profile"></span>
+								</li>
+							</ul>
 						</div>
 					</div>
 					<div class="container">
@@ -232,14 +238,17 @@
 						<form class="ant-form ant-form-horizontal register-form">
 							<div class="ant-row ant-form-item">
 								<div class="ant-form-item-control-wrapper">
-									<div class="ant-form-item-control ">
+									<div class="ant-form-item-control has-feedback">
 									<span class="ant-input-affix-wrapper">
 										<span class="ant-input-prefix"><i class="anticon anticon-mail" style="font-size: 13px;"></i></span>
-										<input type="text" placeholder="Please input your E-mail!" value="" class="ant-input ant-input-lg">
+										<input type="text" placeholder="Please input your E-mail!" value="" data-key="email" class="ant-input ant-input-lg">
 									</span>
+									<div class="ant-form-explain collapse">The input is not valid E-mail!</div>
 									</div>
 								</div>
 							</div>
+<!--
+
 							<div class="ant-row ant-form-item">
 								<div class="ant-form-item-control-wrapper">
 									<div class="ant-form-item-control ">
@@ -249,13 +258,15 @@
 									</div>
 								</div>
 							</div>
+-->
 							<div class="ant-row ant-form-item">
 								<div class="ant-form-item-control-wrapper">
-									<div class="ant-form-item-control ">
+									<div class="ant-form-item-control has-feedback">
 									<span class="ant-input-affix-wrapper">
 										<span class="ant-input-prefix"><i class="anticon anticon-lock" style="font-size: 13px;"></i></span>
-										<input type="password" placeholder="Password" value="" class="ant-input ant-input-lg">
+										<input type="password" placeholder="Password" value="" data-key="pass" class="ant-input ant-input-lg">
 									</span>
+									<div class="ant-form-explain collapse">The input is not valid length!</div>
 									</div>
 								</div>
 							</div>
@@ -295,21 +306,23 @@
 						<form class="ant-form ant-form-horizontal login-form">
 							<div class="ant-row ant-form-item">
 								<div class="ant-form-item-control-wrapper">
-									<div class="ant-form-item-control ">
+									<div class="ant-form-item-control has-feedback">
 									<span class="ant-input-affix-wrapper">
 										<span class="ant-input-prefix"><i class="anticon anticon-user" style="font-size: 13px;"></i></span>
 										<input type="text" placeholder="Your ID or email" value="" data-key="onum" class="ant-input ant-input-lg">
 									</span>
+									<div class="ant-form-explain collapse">The input is not valid E-mail!</div>
 									</div>
 								</div>
 							</div>
 							<div class="ant-row ant-form-item">
 								<div class="ant-form-item-control-wrapper">
-									<div class="ant-form-item-control ">
+									<div class="ant-form-item-control has-feedback">
 									<span class="ant-input-affix-wrapper">
 										<span class="ant-input-prefix"><i class="anticon anticon-lock" style="font-size: 13px;"></i></span>
 										<input type="password" placeholder="Password" value="" data-key="pass" class="ant-input ant-input-lg">
 									</span>
+									<div class="ant-form-explain collapse">The input is not valid length!</div>
 									</div>
 								</div>
 							</div>
@@ -353,14 +366,16 @@
 						<div class="ant-modal-title" id="rcDialogTitle2">Forgot password</div>
 					</div>
 					<div class="ant-modal-body">
+						<div class="error-title"></div>
 						<form class="ant-form ant-form-horizontal forgot-form">
 							<div class="ant-row ant-form-item">
 								<div class="ant-form-item-control-wrapper">
-									<div class="ant-form-item-control ">
+									<div class="ant-form-item-control has-feedback">
 										<span class="ant-input-affix-wrapper">
 										<span class="ant-input-prefix"><i class="anticon anticon-mail" style="font-size: 13px;"></i></span>
 										<input type="text" data-key="email" placeholder="Please input your E-mail!" value="" class="ant-input ant-input-lg">
 										</span>
+										<div class="ant-form-explain collapse">The input is not valid E-mail!</div>
 									</div>
 								</div>
 							</div>
