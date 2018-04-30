@@ -198,3 +198,92 @@
 .herAddress .profile-num {
 	margin-bottom: 4px;
 }
+.ant-modal-body.info {
+	border: solid lightpink;
+}
+
+.box.rb-row-box.rb-servise {
+	background: white;
+}
+.rb-servise {
+	/*background: white;*/
+}
+.rb-servise .col-sm-12 {
+    padding-top: 5px;
+	padding-bottom: 5px;
+    background-color: white;
+}
+.rb-servise h3 {
+    text-align: left;
+    padding-left: 30px;
+    padding-top: 2px;
+}
+.n1 {
+    background: url(img/1.gif) no-repeat;
+}
+.n2 {
+    background: url(img/2.gif) no-repeat;
+}
+.n3 {
+    background: url(img/3.gif) no-repeat;
+
+}
+.rb-servise .tick {
+    background: url(img/tick.gif) no-repeat;
+    padding-left: 20px;
+	color: black;
+}
+.rb-servise .arrow {
+    background: url(img/arrow.gif) no-repeat;
+    padding-left: 16px;
+	padding-top: 0px;
+	color: black;
+}
+.rb-servise .cross_transp {
+    background: url(img/cross_transp.gif) no-repeat;
+    padding-left: 16px;
+	padding-top: 0px;
+	margin-bottom: 0px;
+	margin-left: 10px;
+	font-size: 10pt;
+}
+.rb-servise .galka_transp {
+    background: url(img/galka_transp.gif) no-repeat;
+    padding-left: 16px;
+	padding-top: 0px;
+	margin-bottom: 0px;
+	margin-left: 10px;
+	font-size: 10pt;
+}
+
+.rb-servise .rb-row-box {
+	background-color: lightcyan;
+	padding: 10px;
+}
+
+.rb-servise .autor {
+	font-weight: bold;
+}
+.fs10 {
+    font-size: 10pt;
+}
+.mb0 {
+	margin-bottom: 0px;
+}
+
+.mt8 {
+    margin-top: 8px;
+}
+.colorr {
+	color: #EE0005;
+}
+
+.ta-right {
+	text-align: right;
+}
+.pt10 {
+    padding-top: 10px;
+}
+.box-picture .flag {
+	z-index: 1;
+}

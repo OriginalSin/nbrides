@@ -2,11 +2,243 @@
     'use strict';
 
 window.B = window.B || {};
+var arr = location.search.split('&'),
+	len = arr.length,
+	out = {par: {}};
+if (arr[0].indexOf('?') === 0) arr[0] = arr[0].substr(1);
+if (arr[len - 1].indexOf('#') === 0) {
+	out.achor = arr[len - 1].substr(1);
+	len--;
+}
+for (var i = 0; i < len; i++) {
+	var pv = arr[i].split('=');
+	out.par[pv[0]] = pv[1];
+}
+var urlParams = out;
+
 var host = '//russianbrides.com.au',
 	cgiURLauth = host + '/cgi/publ/auth.pl',
 	cgiURL = host + '/cgi/publ/nserv.pl',
-	auth = {};
+	auth = {
+		usr: urlParams.par.usr || 'm'
+	};
 // var prefixURL = 'http://russianbrides.com.au/cgi/nserv.pl';
+var templates = {
+	'rb-header1': '<div class="container clearfix">\
+			<div class="ant-radio-group ant-radio-group-large rb-float-left">\
+				<label data-usr="m" class="cmdFlag ant-radio-button-wrapper {mChecked}"><span class="ant-radio-button ant-radio-button-checked"><span class="ant-radio-button-inner"></span></span><span><img class="language-flag" src="css/img/au.png" alt="au" title="Australia"></span></label>\
+				<label data-usr="w" class="cmdFlag ant-radio-button-wrapper {wChecked}"><span class="ant-radio-button"><span class="ant-radio-button-inner"></span></span><span><img class="language-flag" src="css/img/ru.png" alt="ru" title="Russia"></span></label>\
+			</div>\
+			<div class="rb-cont-sign rb-float-right rb-signed-off">\
+				<span class="cmdRegister rb-float-left"><div class="fa fa-users"><span>Register</span></div></span>\
+				<span class="cmdSign rb-float-right"><div class="fa fa-sign-in"><span>Login</span></div></span>\
+			</div>\
+			<ul class="header-submenu pull-right rb-signed-on collapse">\
+				<li>\
+					<span class="fa fa-sign-out cmdSignOut"><span class="rb-pointer" title="Sign Out">Logout</span></span>\
+					<span class="mail-User-Picture js-user-picture is-updated rb-edit-profile"></span>\
+				</li>\
+			</ul>\
+		</div>\
+	',
+	'rb-nav': '<div class="navbar-header">\
+			<button type="button" class="navbar-toggle rb-menu-button" data-toggle="collapse" data-target=".navbar-main">\
+				<span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span>\
+				<span class="icon-bar"></span>\
+			</button>\
+			<a class="navbar-brand rb-vert-10" href="index.html?usr={usr}">\
+				<span class="logo-styled">\
+					<span class="logo-title">\
+						<img src="http://russianbrides.com.au/img/logo_big.gif" height="50" alt="" data-evernote-hover-show="true">\
+					</span>\
+					<span class="logo-subtitle hidden-sm"></span>\
+				</span>\
+			</a>\
+		</div>\
+		<div class="navbar-collapse navbar-main rb-menu-content collapse">\
+			<ul class="nav navbar-nav navbar-right rb-menu-button">\
+				<li class="menuparent"><a href="index.html?usr={usr}&onum={onum}">Home</a></li>\
+				<li class="menuparent"><a href="catalogue.html?usr={usr}">Catalogue</a></li>\
+				<li class="menuparent"><a href="service.html">Service and Prices</a></li>\
+				<li class="menuparent  columns4"><a href="#">Contact</a>\
+					<ul>\
+						<li><a href="service.html">Service and Prices</a></li>\
+						<li><a href="listing-grid.html">Grid Version</a></li>\
+						<li><a href="listing-grid-filter.html">Grid + Filter</a></li>\
+						<li><a href="listing-row.html">Row Version</a></li>\
+						<li><a href="listing-row-filter.html">Row + Filter</a></li>\
+					</ul>\
+				</li>\
+			</ul>\
+		</div>\
+	',
+	registerDialog: '<div class="ant-modal-mask ant-modal-mask-hidden"></div>\
+		<div tabindex="-1" class="ant-modal-wrap ant-modal-mask-hidden" role="dialog" aria-labelledby="rcDialogTitle0">\
+			<div role="document" class="ant-modal" style="width: 520px; transform-origin: 515px -83px 0px;">\
+				<div class="ant-modal-content">\
+					<button aria-label="Close" class="ant-modal-close cmdClose"><span class="ant-modal-close-x "></span></button>\
+					<div class="ant-modal-header">\
+						<div class="ant-modal-title" id="rcDialogTitle0">Register</div>\
+					</div>\
+					<div class="ant-modal-body">\
+						<form class="ant-form ant-form-horizontal register-form">\
+							<div class="ant-row ant-form-item">\
+								<div class="ant-form-item-control-wrapper">\
+									<div class="ant-form-item-control has-feedback">\
+									<span class="ant-input-affix-wrapper">\
+										<span class="ant-input-prefix"><i class="anticon anticon-mail" style="font-size: 13px;"></i></span>\
+										<input type="text" placeholder="Please input your E-mail!" value="" data-key="email" class="ant-input ant-input-lg">\
+									</span>\
+									<div class="ant-form-explain collapse">The input is not valid E-mail!</div>\
+									</div>\
+								</div>\
+							</div>\
+							<div class="ant-row ant-form-item">\
+								<div class="ant-form-item-control-wrapper">\
+									<div class="ant-form-item-control has-success">\
+										<div class="floatRight">\
+											<span class="login-form-forgot cmdForgot">Forgot password</span> or <span><span class="login-form-forgot cmdSign">Sign In</span></span>\
+										</div>\
+									</div>\
+								</div>\
+							</div>\
+						</form>\
+					</div>\
+					<div class="ant-modal-footer">\
+						<button type="button" class="ant-btn ant-btn-lg cmdClose"><span>Cancel</span></button>\
+						<button type="button" data-key="register" class="ant-btn ant-btn-primary ant-btn-lg cmdSave"><span data-key="register">Register</span></button>\
+					</div>\
+					<div class="ant-modal-body info">\
+						<font color="Black"><font color="Red"><b>IMPORTANT!</b></font> We do not send unsolicited email or spam to our customers or anyone else. The only email we send is email about your account or membership. After you sign in we will send you confirmation of your registration with your ID and PASSWORD. \
+							<br><br>Many ISP (Internet Service Providers) and mail service providers like <b>@optusnet.com.au</b> and other are starting to use filters to keep out spam. Unfortunately, this often means they are keeping out our email to you about your registration, too. The only solution to this problem is for you to be aware what triggers your ISPs blockage and make sure they understand you want to receive our email.<br><br>Some email providers filter messages based on content, subject line, or the sender\'s address and may put your email into the a bulk or junk mail folder. Please make sure <br><b>@russianbrides.com.au</b> <br>is on your "approved sender" list or "whitelist" and/or in your "address book".</font>\
+					</div>\
+				</div><div tabindex="0" style="width: 0px; height: 0px; overflow: hidden;">sentinel</div>\
+			</div>\
+		</div>\
+	',
+	signDialog: '<div class="ant-modal-mask ant-modal-mask-hidden"></div>\
+		<div tabindex="-1" class="ant-modal-wrap ant-modal-mask-hidden" role="dialog" aria-labelledby="rcDialogTitle1">\
+			<div role="document" class="ant-modal" style="width: 520px; transform-origin: 590px -85px 0px;">\
+				<div class="ant-modal-content">\
+					<button aria-label="Close" class="ant-modal-close cmdClose"><span class="ant-modal-close-x"></span></button>\
+					<div class="ant-modal-header">\
+						<div class="ant-modal-title" id="rcDialogTitle1">Sign In</div>\
+					</div>\
+					<div class="ant-modal-body">\
+						<div class="error-title"></div>\
+						<form class="ant-form ant-form-horizontal login-form">\
+							<div class="ant-row ant-form-item">\
+								<div class="ant-form-item-control-wrapper">\
+									<div class="ant-form-item-control has-feedback">\
+									<span class="ant-input-affix-wrapper">\
+										<span class="ant-input-prefix"><i class="anticon anticon-user" style="font-size: 13px;"></i></span>\
+										<input type="text" placeholder="Your ID or email" value="" data-key="onum" class="ant-input ant-input-lg">\
+									</span>\
+									<div class="ant-form-explain collapse">The input is not valid E-mail!</div>\
+									</div>\
+								</div>\
+							</div>\
+							<div class="ant-row ant-form-item">\
+								<div class="ant-form-item-control-wrapper">\
+									<div class="ant-form-item-control has-feedback">\
+									<span class="ant-input-affix-wrapper">\
+										<span class="ant-input-prefix"><i class="anticon anticon-lock" style="font-size: 13px;"></i></span>\
+										<input type="password" placeholder="Password" value="" data-key="pass" class="ant-input ant-input-lg">\
+									</span>\
+									<div class="ant-form-explain collapse">The input is not valid length!</div>\
+									</div>\
+								</div>\
+							</div>\
+							<div class="ant-row ant-form-item">\
+								<div class="ant-form-item-control-wrapper">\
+									<div class="ant-form-item-control has-success">\
+										<label class="ant-checkbox-wrapper">\
+											<span class="ant-checkbox ant-checkbox-checked cmdCheckbox">\
+												<input type="checkbox" class="ant-checkbox-input" data-key="remember" value="on">\
+												<span class="ant-checkbox-inner"></span>\
+											</span>\
+											<span>Remember me</span>\
+										</label>\
+										<div class="floatRight">\
+											<span class="login-form-forgot cmdForgot">Forgot password</span> or <span><span class="login-form-forgot cmdRegister">Register now!</span></span>\
+										</div>\
+									</div>\
+								</div>\
+							</div>\
+						</form>\
+					</div>\
+					<div class="ant-modal-footer">\
+						<button type="button" class="ant-btn ant-btn-lg cmdClose"><span>Cancel</span></button>\
+						<button type="button" data-key="login" class="ant-btn ant-btn-primary ant-btn-lg cmdSave"><span data-key="login">Log in</span></button>\
+					</div>\
+				</div>\
+				<div tabindex="0" style="width: 0px; height: 0px; overflow: hidden;">sentinel</div>\
+			</div>\
+		</div>\
+	',
+	forgotDialog: '<div class="ant-modal-mask ant-modal-mask-hidden"></div>\
+		<div tabindex="-1" class="ant-modal-wrap ant-modal-mask-hidden" role="dialog" aria-labelledby="rcDialogTitle2">\
+			<div role="document" class="ant-modal" style="width: 520px; transform-origin: 537px 190px 0px;">\
+				<div class="ant-modal-content">\
+					<button aria-label="Close" class="ant-modal-close"><span class="ant-modal-close-x cmdClose"></span></button>\
+					<div class="ant-modal-header">\
+						<div class="ant-modal-title" id="rcDialogTitle2">Forgot password</div>\
+					</div>\
+					<div class="ant-modal-body">\
+						<div class="error-title"></div>\
+						<form class="ant-form ant-form-horizontal forgot-form">\
+							<div class="ant-row ant-form-item">\
+								<div class="ant-form-item-control-wrapper">\
+									<div class="ant-form-item-control has-feedback">\
+										<span class="ant-input-affix-wrapper">\
+										<span class="ant-input-prefix"><i class="anticon anticon-mail" style="font-size: 13px;"></i></span>\
+										<input type="text" data-key="email" placeholder="Please input your E-mail!" value="" class="ant-input ant-input-lg">\
+										</span>\
+										<div class="ant-form-explain collapse">The input is not valid E-mail!</div>\
+									</div>\
+								</div>\
+							</div>\
+						</form>\
+					</div>\
+					<div class="ant-modal-footer">\
+						<button type="button" class="ant-btn ant-btn-lg cmdClose"><span>Cancel</span></button>\
+						<button type="button" data-key="forgot" class="ant-btn ant-btn-primary ant-btn-lg cmdSave"><span data-key="forgot">Send</span></button>\
+					</div>\
+					<div class="ant-modal-body info">\
+						You will receive a password in your E-mail very soon.\
+					</div>\
+				</div>\
+				<div tabindex="0" style="width: 0px; height: 0px; overflow: hidden;">sentinel</div>\
+			</div>\
+		</div>\
+	',
+	galer1: '<div class="col-sm-4 col-md-3">\
+		<div class="box image-zoom">\
+			<div class="box-picture">\
+				<div class="flag">_pName_</div>\
+				<div class="box-content">\
+					<table class="box-table box-picture-meta">\
+						<tbody><tr>\
+							<td><strong>Profile</strong><br>_onum_<sup></sup></td>\
+							<td><strong>Age</strong><br>_age_</td>\
+							<td><strong>Children</strong><br>_nkids_</td>\
+							<td><strong>_langName_</strong><br>_engurov_</td>\
+						</tr></tbody>\
+					</table>\
+				</div>\
+				<img src="' + host + '/__jpg2_" alt="" onerror="this.src=\'./css/img/blank_gender_.jpg\'; this.onerror=\'\';" class="rb-image-zoom" onum="_onum_" gender="_gender_">\
+			</div>\
+			<div class="box-body">\
+				<h2 class="box-title-plain">_pName_</h2>\
+				<div class="box-location box-subtitle">\
+					<div class="location-country">_city_ (_country_)</div>\
+				</div>\
+			</div>\
+		</div>\
+	</div>'
+	,
+
+};
 
 var Util = {
 	reg: {
@@ -41,7 +273,7 @@ var Util = {
 			cmd = node.getAttribute('data-key'),
 			formName = cmd + '-form',
 			form = Util.getNode(cmd + '-form'),
-			par = {cmd: cmd, usr: 'w'};
+			par = {cmd: cmd, usr: auth.usr};
 		if (form && form.length) {
 			for (var i = 0, len = form.length; i < len; i++) {
 				var it = form[i],
@@ -52,6 +284,8 @@ var Util = {
 				par.uAttr = 1;
 			} else if (cmd === 'forgot') {
 				par.uForgot = 1;
+			} else if (cmd === 'register') {
+				par.uForgot = 1;
 			}
 
 			return L.gmxUtil.requestJSONP(cgiURLauth, par, {callbackParamName: 'callback'}).then(function(json) {
@@ -59,6 +293,10 @@ var Util = {
 console.log('cmd', cmd, json);
 				if (cmd === 'login') {
 					Util._toggleLogin(pt.err ? null : pt);
+				} else if (cmd === 'register') {
+					if (pt.pageType === 'Login') {
+						Util.cmdSign(null, par.email);
+					}
 				} else if (cmd === 'forgot') {
 					if (pt.err) {
 						var explain = Util.getNode('ant-form-explain', node.parentNode.parentNode.parentNode);
@@ -74,32 +312,108 @@ console.log('cmd', cmd, json);
 	},
 	cmdClose: function() {
 		Util._parseList(Util._needClose, L.DomUtil.addClass);
-		// console.log('cmdClose', ev);
+	},
+	_chkOpl: function() {
+		var out = false;
+		if (auth.usr === 'm' && auth.op2) {
+			out = true;
+		} else {
+			Util._prpModal('signDialog', {needSign: true});
+		}
+		
+		// console.log('_chkOpl', auth);
+		return out;
+	},
+	cmdTalk: function(ev) {
+		if (Util._chkOpl()) {
+			Util.cmdClose();
+		}
 	},
 	cmdHerAddress: function(ev) {
-		Util.cmdClose();
-		var node = Util.getNode('herAddress');
-		Util._needClose = [Util.getNode('ant-modal-mask', node), Util.getNode('ant-modal-wrap', node)];
-		Util._parseList(Util._needClose, L.DomUtil.removeClass);
-		B.Galer.showFullAddress();
+		if (Util._chkOpl()) {
+			Util.cmdClose();
+			var node = Util.getNode('herAddress');
+			Util._needClose = [Util.getNode('ant-modal-mask', node), Util.getNode('ant-modal-wrap', node)];
+			Util._parseList(Util._needClose, L.DomUtil.removeClass);
+			B.Galer.showFullAddress();
+		}
 	},
-	cmdRegister: function(ev) {
+	_prpModal: function(name, opt) {
 		Util.cmdClose();
-		var node = Util.getNode('registerDialog');
+		opt = opt || {};
+		var node = Util.getNode(name),
+			str = templates[name],
+			dop = {};
+		// dop[auth.usr + 'Checked'] = 'ant-radio-button-wrapper-checked';
+		// str = str.replace(/{(\w+)}/g, function(tmp, key) {
+		// 	return auth[key] || dop[key] || '';
+		// });
+		node.innerHTML = str;
+
+		for (var i = 0, list = Util.getNodes('ant-input', node), len = list.length; i < len; i++) {
+			var target = list[i],
+				type = target.getAttribute('data-key');
+			if (type === 'onum') { L.DomEvent.on(target, 'change', Util.onInputChange, Util); }
+			L.DomEvent.on(target, 'keypress', Util.onInputChange, Util);
+		}
+		
+		['cmdRegister', 'cmdSign', 'cmdForgot', 'cmdClose', 'cmdSave', 'cmdCheckbox'].forEach(function(name) {
+			for (var i = 0, list = Util.getNodes(name), len = list.length; i < len; i++) {
+				L.DomEvent.on(list[i], 'click', Util[name] || console.log, Util);
+			}
+		});
 		Util._needClose = [Util.getNode('ant-modal-mask', node), Util.getNode('ant-modal-wrap', node)];
 		Util._parseList(Util._needClose, L.DomUtil.removeClass);
+		if (opt.email) {
+			Util.getNode('error-title', node).innerHTML = 'Check your E-mail: ' + opt.email + ' and Sign In';
+		}
+		if (opt.needSign) {
+			Util.getNode('error-title', node).innerHTML = 'Please enter your ID and Password to Sign in';
+		}
+		
 		// console.log('cmdRegister', Util._needClose);
 		// console.log(node);
 	},
+	cmdRegister: function() {
+		Util._prpModal('registerDialog');
+	},
 	cmdSign: function(ev, email) {
-		Util.cmdClose();
-		var node = Util.getNode('signDialog');
-		Util._needClose = [Util.getNode('ant-modal-mask', node), Util.getNode('ant-modal-wrap', node)];
-		Util._parseList(Util._needClose, L.DomUtil.removeClass);
-		if (email) {
-			Util.getNode('error-title', node).innerHTML = 'Check your E-mail: ' + email + ' and Sign In';
-		}
+		Util._prpModal('signDialog', {email: email});
+	},
+	// cmdSign1: function(ev, email) {
+	// 	Util.cmdClose();
+	// 	var node = Util.getNode('signDialog');
+	// 	Util._needClose = [Util.getNode('ant-modal-mask', node), Util.getNode('ant-modal-wrap', node)];
+	// 	Util._parseList(Util._needClose, L.DomUtil.removeClass);
+	// 	if (email) {
+	// 		Util.getNode('error-title', node).innerHTML = 'Check your E-mail: ' + email + ' and Sign In';
+	// 	}
 		
+	// },
+	cmdForgot: function() {
+		Util._prpModal('forgotDialog');
+		// Util.cmdClose();
+		// var node = Util.getNode('forgotDialog');
+		// Util._needClose = [Util.getNode('ant-modal-mask', node), Util.getNode('ant-modal-wrap', node)];
+		// Util._parseList(Util._needClose, L.DomUtil.removeClass);
+	},
+	_togglePaypal: function(flag) {
+		var addClass = 'paypal',
+			removeClass = 'notpaypal',
+			i, list, len, node;
+		if (flag) {
+			addClass = 'notpaypal';
+			removeClass = 'paypal';
+			
+		}
+		for (i = 0, list = Util.getNodes(addClass), len = list.length; i < len; i++) {
+			node = list[i];
+			if (node) L.DomUtil.addClass(node, 'collapse');
+		}
+		for (i = 0, list = Util.getNodes(removeClass), len = list.length; i < len; i++) {
+			node = list[i];
+			if (node) L.DomUtil.removeClass(node, 'collapse');
+		}
 	},
 	_toggleLogin: function(profile) {
 		var nodeOff = Util.getNode('rb-signed-off'),
@@ -108,17 +422,20 @@ console.log('cmd', cmd, json);
 			auth = profile;
 			L.DomUtil.removeClass(nodeOn, 'collapse');
 			L.DomUtil.addClass(nodeOff, 'collapse');
+			Util._togglePaypal(profile);
 		} else {
 			auth = {};
+			auth.usr = urlParams.par.usr || 'm';
 			L.DomUtil.removeClass(nodeOff, 'collapse');
 			L.DomUtil.addClass(nodeOn, 'collapse');
+			Util._togglePaypal();
 		}
 		Util.cmdClose();
 	},
 	cmdSignOut: function() {
 		Util.cmdClose();
 		L.gmx.getJSON(cgiURLauth, {
-			params: {logout:1, json:1, usr:'w'},
+			params: {logout:1, json:1, usr: auth.usr},
 			options: {type:'json'}
 		}).then(function(json) {
 			Util._toggleLogin();
@@ -193,30 +510,42 @@ console.log('cmd', cmd, json);
 		}
 		// console.log('onInputChange', type, val, res);
 	},
-	cmdForgot: function() {
-		Util.cmdClose();
-		var node = Util.getNode('forgotDialog');
-		Util._needClose = [Util.getNode('ant-modal-mask', node), Util.getNode('ant-modal-wrap', node)];
-		Util._parseList(Util._needClose, L.DomUtil.removeClass);
+	refreshMenu: function(ev) {
+		['rb-header1', 'rb-nav'].forEach(function(name) {
+			var node = Util.getNode(name),
+				str = templates[name],
+				dop = {};
+			dop[auth.usr + 'Checked'] = 'ant-radio-button-wrapper-checked';
+			str = str.replace(/{(\w+)}/g, function(tmp, key) {
+				return auth[key] || dop[key] || '';
+			});
+			node.innerHTML = str;
+			if (name === 'rb-header1') {
+				for (var i = 0, list = Util.getNodes(name), len = list.length; i < len; i++) {
+					L.DomEvent.on(list[i], 'click', Util[name] || console.log, Util);
+				}
+			}
+		});
+	},
+	cmdFlag: function(ev) {
+		var node = ev.currentTarget,
+			attrName = 'data-usr',
+			usr = node.attributes[attrName] && node.attributes[attrName].value;
+		if (urlParams.par.usr) {
+			location.href = location.href.replace(/usr=\w/, 'usr=' + usr);
+		} else {
+			location.href = location.origin + location.pathname + '?usr=' + usr;
+		}
+		auth.usr = usr;
 	},
 	_promises: {
 		_sessionKeys: {},
 		_maps: {}
 	}
 };
-var arr = location.search.split('&'),
-	len = arr.length,
-	out = {par: {}};
-if (arr[0].indexOf('?') === 0) arr[0] = arr[0].substr(1);
-if (arr[len - 1].indexOf('#') === 0) {
-	out.achor = arr[len - 1].substr(1);
-	len--;
-}
-for (var i = 0; i < len; i++) {
-	var pv = arr[i].split('=');
-	out.par[pv[0]] = pv[1];
-}
-Util.urlParams = out;
+Util.urlParams = urlParams;
+
+Util.refreshMenu();
 
 for (var i = 0, list = Util.getNodes('ant-input'), len = list.length; i < len; i++) {
 	var target = list[i],
@@ -225,46 +554,28 @@ for (var i = 0, list = Util.getNodes('ant-input'), len = list.length; i < len; i
 	L.DomEvent.on(target, 'keypress', Util.onInputChange, Util);
 }
 
-['cmdHerAddress', 'cmdRegister', 'cmdSign', 'cmdSignOut', 'cmdForgot', 'cmdClose', 'cmdSave', 'cmdCheckbox'].forEach(function(name) {
+['cmdTalk', 'cmdHerAddress', 'cmdRegister', 'cmdSign', 'cmdSignOut', 'cmdForgot', 'cmdFlag', 'cmdClose', 'cmdSave', 'cmdCheckbox'].forEach(function(name) {
 	for (var i = 0, list = Util.getNodes(name), len = list.length; i < len; i++) {
-		L.DomEvent.on(list[i], 'click', Util[name] || console.log, Util);
+		var node = list[i];
+		L.DomEvent.on(node, 'click', Util[name] || console.log, Util);
+		if (auth.usr !== 'm') {
+			if (name === 'cmdHerAddress') {
+				L.DomUtil.addClass(node.parentNode, 'collapse');
+			}
+		}
 	}
 });
-L.gmx.getJSON(cgiURLauth, {
-	params: {json:1, uAttr:1, usr:'w'},
-	options: {type:'json'}
-}).then(function(json) {
-	var pt = json.res.AUTH;
-	Util._toggleLogin(pt.err ? null : pt);
-});
+// L.gmx.getJSON(cgiURLauth, {
+// 	params: {json:1, uAttr:1, usr: auth.usr},
+// 	options: {type:'json'}
+// }).then(function(json) {
+// 	var pt = json.res.AUTH;
+// 	Util._toggleLogin(pt.err ? null : pt);
+// });
 
 window.B.Util = Util;
 
 var Galer = {
-	templ: '<div class="col-sm-4 col-md-3">\
-				<div class="box image-zoom">\
-					<div class="box-picture">\
-						<div class="flag">_pName_</div>\
-						<div class="box-content">\
-							<table class="box-table box-picture-meta">\
-								<tbody><tr>\
-									<td><strong>Profile</strong><br>_onum_<sup></sup></td>\
-									<td><strong>Age</strong><br>_age_</td>\
-									<td><strong>Children</strong><br>_nkids_</td>\
-									<td><strong>English</strong><br>_engurov_</td>\
-								</tr></tbody>\
-							</table>\
-						</div>\
-						<img src="' + host + '/__jpg2_" alt="" onerror="this.src=\'./css/img/blank_gender_.jpg\'; this.onerror=\'\';" class="rb-image-zoom" onum="_onum_" gender="_gender_">\
-					</div>\
-					<div class="box-body">\
-						<h2 class="box-title-plain">_pName_</h2>\
-						<div class="box-location box-subtitle">\
-							<div class="location-country">_city_ (_country_)</div>\
-						</div>\
-					</div>\
-				</div>\
-			</div>',
 	_clickPage: function(ev) {
 		var target = ev.target,
 			node = target.tagName.toLowerCase() === 'li' ? target : target.parentNode;
@@ -376,7 +687,7 @@ var Galer = {
 			},
 			params: {
 				cmd: 'gal',
-				usr: 'm',
+				usr: auth.usr,
 				f: nm * 8,
 				byAge: 0
 			}
@@ -384,8 +695,10 @@ var Galer = {
 		if (Util.urlParams.par.to) opt.params.nw = Util.urlParams.par.to;
 		var cont = Util.getNodes('galerList')[0];
 
-		return L.gmxUtil.requestJSONP(cgiURL, opt.params, {callbackParamName: 'callback'}).then(function(json) {
-		// return L.gmx.getJSON(cgiURL, opt).then(function(json) {
+		return L.gmxUtil.requestJSONP(cgiURLauth, opt.params, {callbackParamName: 'callback'}).then(function(json) {
+			// return L.gmxUtil.requestJSONP(cgiURL, opt.params, {callbackParamName: 'callback'}).then(function(json) {
+				// return L.gmx.getJSON(cgiURL, opt).then(function(json) {
+
 			var galer = json.galer;
 			if (json.res) {
 				if (typeof(json.res) === 'string') {
@@ -393,6 +706,9 @@ var Galer = {
 					json.res = txt;
 				}
 				galer = json.res.galer;
+			}
+			if (json.AUTH) {
+				Util._toggleLogin(json.AUTH.err ? null : json.AUTH);
 			}
 			var out = [],
 				//galer = json.res.galer,
@@ -412,8 +728,9 @@ var Galer = {
 				}
 				it.address = addru + '<br>' + it.fullname;
 				it.talk = host + '/talk.html?usr=' + it.gender + '&onum=' + it.onum + '&ns=' + it.onum;
+				it.langName = auth.usr === 'w' ? 'Russian' : 'English';
 				
-				var st = Galer.templ;
+				var st = templates.galer1;
 				st = st.replace(/_(\w+)_/g, function(match, contents, offset, input_string) {
 					return it[contents] || it.pdata[contents];
 				});
@@ -422,6 +739,9 @@ var Galer = {
 				// console.log('__', st);
 			});
 			// if (pagination) out.push(pagination);
+			if (!cont) {
+				return;
+			}
 			cont.innerHTML = out.join('\n');
 
 			if (Util.urlParams.par.to) {
@@ -471,6 +791,9 @@ var Galer = {
 			for (var i = 0, len = list.length; i < len; i++) {
 				list[i].innerHTML = zn;
 			}
+			if(key === 'engurov' && auth.usr === 'w') {
+				list[0].parentNode.firstChild.innerHTML = 'Russian level: ';
+			}
 		});
 	},
 	_curNum: null,
@@ -494,7 +817,7 @@ var Galer = {
 		}
 		Galer._curNum = onum;
 		if (!Galer.rbPhotoCatalog) {
-			location.href = 'catalogue.html?to=' + onum;
+			location.href = 'catalogue.html?usr=' + auth.usr + '&to=' + onum;
 			// Galer.getPage(null, onum);
 			return true;
 		}
@@ -506,9 +829,10 @@ var Galer = {
 			Galer._putImageSrc(it);
 			L.DomUtil.addClass(rbPhotoCatalog, 'collapse');
 			L.DomUtil.removeClass(rbItemDetail, 'collapse');
+			Galer._putHref('http://russianbrides.com.au/maps/myLocation.html?ip=' + it.ip, 'rb-href-url', Galer.rbItemDetail);
 		} else {
 			if (Util.urlParams.par.to) {
-				location.href = 'catalogue.html';
+				location.href = 'catalogue.html?usr=' + auth.usr;
 				return true;
 			}
 			L.DomUtil.addClass(rbItemDetail, 'collapse');
