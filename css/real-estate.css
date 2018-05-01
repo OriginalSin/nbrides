@@ -4976,8 +4976,8 @@ input[type="button"].btn-block {
 }
 /* line 21, ../../libraries/bootstrap/stylesheets/bootstrap/_mixins.scss */
 .navbar:before, .navbar:after {
-  content: " ";
-  display: table;
+  /* content: " "; */
+  /* display: table; */
 }
 /* line 25, ../../libraries/bootstrap/stylesheets/bootstrap/_mixins.scss */
 .navbar:after {
@@ -4992,8 +4992,8 @@ input[type="button"].btn-block {
 
 /* line 21, ../../libraries/bootstrap/stylesheets/bootstrap/_mixins.scss */
 .navbar-header:before, .navbar-header:after {
-  content: " ";
-  display: table;
+  /* content: " "; */
+  /* display: table; */
 }
 /* line 25, ../../libraries/bootstrap/stylesheets/bootstrap/_mixins.scss */
 .navbar-header:after {
@@ -5018,8 +5018,8 @@ input[type="button"].btn-block {
 }
 /* line 21, ../../libraries/bootstrap/stylesheets/bootstrap/_mixins.scss */
 .navbar-collapse:before, .navbar-collapse:after {
-  content: " ";
-  display: table;
+  /* content: " "; */
+  /* display: table; */
 }
 /* line 25, ../../libraries/bootstrap/stylesheets/bootstrap/_mixins.scss */
 .navbar-collapse:after {
@@ -7869,7 +7869,7 @@ button.close {
   -ms-border-radius: 50%;
   -o-border-radius: 50%;
   border-radius: 50%;
-  color: #343434;
+  /* color: #343434; */
   height: 0px;
   padding-bottom: 100%;
   position: relative;
@@ -7896,7 +7896,7 @@ button.close {
 /* line 160, ../../scss/helpers/_commons.scss */
 .circle-icon i.flag {
   background-color: transparent;
-  color: #343434;
+  /* color: #343434; */
 }
 /* line 166, ../../scss/helpers/_commons.scss */
 .background-primary .circle-icon {
@@ -7949,7 +7949,7 @@ button.close {
 
 /* line 208, ../../scss/helpers/_commons.scss */
 .color-primary {
-  color: #343434;
+  /* color: #343434; */
 }
 
 /* line 212, ../../scss/helpers/_commons.scss */
@@ -7974,7 +7974,7 @@ button.close {
 
 /* line 228, ../../scss/helpers/_commons.scss */
 .background-primary {
-  background-color: #343434;
+  /* background-color: #343434; */
 }
 
 /* line 232, ../../scss/helpers/_commons.scss */
@@ -8338,7 +8338,7 @@ button.close {
   -ms-border-radius: 22px;
   -o-border-radius: 22px;
   border-radius: 22px;
-  color: #343434;
+  /* color: #343434; */
   display: inline-block;
   font-size: 14px;
   margin: 0px 5px 7px 0px;
@@ -9342,8 +9342,8 @@ hr {
 
 /* line 55, ../../scss/helpers/_structure.scss */
 h1, h2, h3, h4, h5, h6 {
-  color: #343434;
-  margin: 0px 0px 20px 0px;
+  /* color: #343434; */
+  /* margin: 0px 0px 20px 0px; */
 }
 
 /* line 60, ../../scss/helpers/_structure.scss */
@@ -9622,7 +9622,7 @@ blockquote:after {
 }
 /* line 37, ../../scss/helpers/_header.scss */
 .navbar-toggle .icon-bar {
-  background-color: #343434 !important;
+  /* background-color: #343434 !important; */
 }
 
 /* line 42, ../../scss/helpers/_header.scss */
@@ -9846,7 +9846,7 @@ blockquote:after {
 /* line 252, ../../scss/helpers/_header.scss */
 .footer-nav > li > a,
 .navbar-default .navbar-nav > li > a {
-  color: #343434;
+  color: inherit;
   display: inline-block;
   font-size: 16px;
   font-weight: 500;
@@ -10026,7 +10026,7 @@ blockquote:after {
 }
 /* line 410, ../../scss/helpers/_header.scss */
 .header-boxed.header-dark .navbar > .container {
-  background-color: #343434;
+  /* background-color: #343434; */
 }
 
 @media (max-width: 767px) {
@@ -10038,7 +10038,7 @@ blockquote:after {
   }
   /* line 421, ../../scss/helpers/_header.scss */
   .navbar-collapse .navbar-nav {
-    background-color: #343434;
+    /* background-color: #343434; */
     margin: 12px -15px 0px -15px;
   }
   /* line 426, ../../scss/helpers/_header.scss */
@@ -10149,7 +10149,7 @@ blockquote:after {
 }
 /* line 529, ../../scss/helpers/_header.scss */
 .navbar-description strong {
-  color: #343434;
+  /* color: #343434; */
   display: block;
   margin-bottom: 5px;
 }
@@ -10194,12 +10194,12 @@ blockquote:after {
 }
 /* line 27, ../../scss/helpers/_breadcrumb.scss */
 .breadcrumb a {
-  color: #343434;
+  /* color: #343434; */
 }
 /* line 31, ../../scss/helpers/_breadcrumb.scss */
 .breadcrumb > li + li:before {
   content: '\f101' !important;
-  color: #343434;
+  /* color: #343434; */
   font-family: 'FontAwesome';
   font-weight: normal !important;
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=40);
@@ -10208,7 +10208,7 @@ blockquote:after {
 }
 /* line 40, ../../scss/helpers/_breadcrumb.scss */
 .breadcrumb .active {
-  color: #343434;
+  /* color: #343434; */
   font-style: italic;
   font-weight: 600;
 }
@@ -10520,7 +10520,7 @@ blockquote:after {
 
 /* line 172, ../../scss/helpers/_boxes.scss */
 .box-title-plain, .box-title-plain a {
-  color: #5a5a5a;
+  /* color: #5a5a5a; */
   font-size: 22px;
   font-weight: 500;
   line-height: 26px;
@@ -10618,7 +10618,7 @@ blockquote:after {
 /* line 260, ../../scss/helpers/_boxes.scss */
 .box-content .box-table td {
   font-weight: normal;
-  font-size: 10px;
+  /* font-size: 10px; */
   padding: 8px;
   text-align: center;
   width: 50%;
@@ -11216,7 +11216,7 @@ blockquote:after {
 /* line 1, ../../scss/helpers/_tabs.scss */
 .nav-tabs > li > a {
   background-color: #f0f0f0;
-  color: #5a5a5a !important;
+  color: #5a5a5a;
   font-size: 16px;
   font-weight: 500;
   margin: 0px;

@@ -18,7 +18,7 @@
 
 </head>
 
-<body class="footer-top-dark" style="">
+<body class="rb-dark">
 <div>
 	<div class="rb-main">
 		<div class="header">
@@ -33,7 +33,7 @@
 		<div class="main-wrapper">
 			<div class="main">
 				<div class="main-inner">
-					<div class="block-content fullwidth background-white mostRecentProperties rb-pt rb-photo-catalog">
+					<div class="block-content fullwidth mostRecentProperties rb-pt rb-photo-catalog">
 						<h3 class="rb-widgetized-title">Photo Catalogue<div class="rb-sub-title">Browse through Photo Catalogue</div></h3>
 						<div class="rb-pagination-row"></div>
 						<div class="block-content-inner">
@@ -48,7 +48,7 @@
 					<div class="container rb-item-detail collapse">
 						<div class="block-content rb-vert-10 rb-mtop-10">
 							<div class="rb-back-button">
-								<li title="Previous Page" class="ant-pagination-prev" tabindex="0"><a class="ant-pagination-item-link"></a></li>
+								<li title="Previous Page" class="ant-pagination-prev rb-button" tabindex="0"><a class="ant-pagination-item-link"></a></li>
 							</div>
 							<div class="block-content-inner">
 								<h3 class="rb-line-after rb-width80">Profile #<span class="rb-item-onum"></span> (<span class="rb-item-pName"></span>)</h3>
@@ -56,14 +56,14 @@
 								<div class="row">
 									<div class="col-sm-6">
 										<div class="col-sm-12">
-											<div class="box background-white">
+											<div class="box">
 												<div class="row">
 													<div class="col-md-12 col-lg-5">
 														<div class="row">
 															<div class="box-picture">
 																<a href="#">
 																	<img class="rb-src-jpg2" src="" alt="">
-																	<span></span>
+																	<!-- <span></span> -->
 																</a>
 															</div><!-- /.box-picture -->
 														</div><!-- /.row -->
@@ -87,14 +87,13 @@
 
 									<div class="col-sm-6">
 										<ul id="myTab" class="nav nav-tabs three rb-tab-nav">
-											<li class="" tabName="overview"><a href="#overview" data-toggle="tab">About</a></li>
-											<li class="active" tabName="contact"><a href="#contact" data-toggle="tab">Contacts</a></li>
+											<li class="" tabName="overview"><a href="#myTab" data-toggle="tab">About</a></li>
+											<li class="active" tabName="contact"><a href="#myTab" data-toggle="tab">Contacts</a></li>
 										</ul>
 
 										<div id="myTabContent" class="tab-content">
-											<div class="tab-pane fade in active" id="contact">
+											<div class="tab-pane fade in active tab-contact">
 												<div class="row">
-													<a name="contact"></a> 
 													<div class="col-sm-6 col-md-6">
 														<a class="btn btn-secondary btn-block cmdTalk" href="#"><i class="fa fa-envelope"></i>Talk Room</a>
 													</div>
@@ -116,10 +115,9 @@
 												</div>
 											</div>
 
-											<div class="tab-pane fade in" id="overview">
+											<div class="tab-pane fade in tab-overview">
 												<div class="row">
-													<a name="overview"></a> 
-													<div class="col-sm-12 col-md-12">
+													<div class="col-sm-12 col-md-12 mlr15">
 														<ul class="list-bulleted">
 															<li><span class="dot">Age: </span><span class="rb-item rb-item-age"></span></li>
 															<li><span class="dot">Eye Colour: </span><span class="rb-item rb-item-EyeColor"></span></li>
@@ -148,19 +146,12 @@
 						</div><!-- /.block-content -->
 					</div>
 				</div>
-				
-<!--
-				<div class="box-images clearfix mostRecentSmall">
-					<div class="box-image no-border col-xs-12 col-sm-4 col-md-3 col-lg-2 hidden-xs hidden-sm hidden-md"><a href="#"><img src="assets/img/tmp/real-estate/properties/1.jpg" alt=""><span class="flag">$ 45,000</span><span class="description"><span class="description-inner"><span class="title">26 Evergreen</span><span class="box-image-meta row"><span class="box-image-meta-cell col-xs-3 col-sm-3"><span class="box-image-meta-cell-inner"><strong>Area</strong><span>150m<sup>2</sup></span></span></span><span class="box-image-meta-cell col-xs-3 col-sm-3"><span class="box-image-meta-cell-inner"><strong>Garage</strong><span>Yes</span></span></span><span class="box-image-meta-cell col-xs-3 col-sm-3"><span class="box-image-meta-cell-inner"><strong>Beds</strong><span>1</span></span></span><span class="box-image-meta-cell col-xs-3 col-sm-3"><span class="box-image-meta-cell-inner"><strong>Bath</strong><span>No</span></span></span></span></span></span></a></div><div class="box-image no-border col-xs-12 col-sm-4 col-md-3 col-lg-2 hidden-xs hidden-sm hidden-md"><a href="#"><img src="assets/img/tmp/real-estate/properties/2.jpg" alt=""><span class="flag">$ 50,000</span><span class="description"><span class="description-inner"><span class="title">68 Lawrence St</span><span class="box-image-meta row"><span class="box-image-meta-cell col-xs-3 col-sm-3"><span class="box-image-meta-cell-inner"><strong>Area</strong><span>100m<sup>2</sup></span></span></span><span class="box-image-meta-cell col-xs-3 col-sm-3"><span class="box-image-meta-cell-inner"><strong>Garage</strong><span>No</span></span></span><span class="box-image-meta-cell col-xs-3 col-sm-3"><span class="box-image-meta-cell-inner"><strong>Beds</strong><span>2</span></span></span><span class="box-image-meta-cell col-xs-3 col-sm-3"><span class="box-image-meta-cell-inner"><strong>Bath</strong><span>No</span></span></span></span></span></span></a></div><div class="box-image no-border col-xs-12 col-sm-4 col-md-3 col-lg-2 hidden-xs hidden-sm hidden-md"><a href="#"><img src="assets/img/tmp/real-estate/properties/3.jpg" alt=""><span class="flag">$ 55,000</span><span class="description"><span class="description-inner"><span class="title">617 Albert St</span><span class="box-image-meta row"><span class="box-image-meta-cell col-xs-3 col-sm-3"><span class="box-image-meta-cell-inner"><strong>Area</strong><span>150m<sup>2</sup></span></span></span><span class="box-image-meta-cell col-xs-3 col-sm-3"><span class="box-image-meta-cell-inner"><strong>Garage</strong><span>Yes</span></span></span><span class="box-image-meta-cell col-xs-3 col-sm-3"><span class="box-image-meta-cell-inner"><strong>Beds</strong><span>1</span></span></span><span class="box-image-meta-cell col-xs-3 col-sm-3"><span class="box-image-meta-cell-inner"><strong>Bath</strong><span>No</span></span></span></span></span></span></a></div><div class="box-image no-border col-xs-12 col-sm-4 col-md-3 col-lg-2 hidden-xs hidden-sm hidden-md"><a href="#"><img src="assets/img/tmp/real-estate/properties/4.jpg" alt=""><span class="flag">$ 65,000</span><span class="description"><span class="description-inner"><span class="title">81st Avenue</span><span class="box-image-meta row"><span class="box-image-meta-cell col-xs-3 col-sm-3"><span class="box-image-meta-cell-inner"><strong>Area</strong><span>150m<sup>2</sup></span></span></span><span class="box-image-meta-cell col-xs-3 col-sm-3"><span class="box-image-meta-cell-inner"><strong>Garage</strong><span>Yes</span></span></span><span class="box-image-meta-cell col-xs-3 col-sm-3"><span class="box-image-meta-cell-inner"><strong>Beds</strong><span>1</span></span></span><span class="box-image-meta-cell col-xs-3 col-sm-3"><span class="box-image-meta-cell-inner"><strong>Bath</strong><span>No</span></span></span></span></span></span></a></div><div class="box-image no-border col-xs-12 col-sm-4 col-md-3 col-lg-2 hidden-xs hidden-sm hidden-md"><a href="#"><img src="assets/img/tmp/real-estate/properties/5.jpg" alt=""><span class="flag">$ 65,000</span><span class="description"><span class="description-inner"><span class="title">69 Soma St</span><span class="box-image-meta row"><span class="box-image-meta-cell col-xs-3 col-sm-3"><span class="box-image-meta-cell-inner"><strong>Area</strong><span>150m<sup>2</sup></span></span></span><span class="box-image-meta-cell col-xs-3 col-sm-3"><span class="box-image-meta-cell-inner"><strong>Garage</strong><span>Yes</span></span></span><span class="box-image-meta-cell col-xs-3 col-sm-3"><span class="box-image-meta-cell-inner"><strong>Beds</strong><span>1</span></span></span><span class="box-image-meta-cell col-xs-3 col-sm-3"><span class="box-image-meta-cell-inner"><strong>Bath</strong><span>No</span></span></span></span></span></span></a></div><div class="box-image no-border col-xs-12 col-sm-4 col-md-3 col-lg-2 hidden-xs hidden-sm hidden-md"><a href="#"><img src="assets/img/tmp/real-estate/properties/6.jpg" alt=""><span class="flag">$ 75,000</span><span class="description"><span class="description-inner"><span class="title">401 Bryant Ave</span><span class="box-image-meta row"><span class="box-image-meta-cell col-xs-3 col-sm-3"><span class="box-image-meta-cell-inner"><strong>Area</strong><span>150m<sup>2</sup></span></span></span><span class="box-image-meta-cell col-xs-3 col-sm-3"><span class="box-image-meta-cell-inner"><strong>Garage</strong><span>Yes</span></span></span><span class="box-image-meta-cell col-xs-3 col-sm-3"><span class="box-image-meta-cell-inner"><strong>Beds</strong><span>1</span></span></span><span class="box-image-meta-cell col-xs-3 col-sm-3"><span class="box-image-meta-cell-inner"><strong>Bath</strong><span>No</span></span></span></span></span></span></a></div>
-				</div>
--->
-
 			</div>
 		</div>
 	</div>
 </div>
 
-
+<div class="footer-wrapper"></div>
 <div>
 	<div data-reactroot="" class="registerDialog"></div>
 </div>

@@ -24,7 +24,7 @@ var host = '//russianbrides.com.au',
 	};
 // var prefixURL = 'http://russianbrides.com.au/cgi/nserv.pl';
 var templates = {
-	'rb-header1': '<div class="container clearfix">\
+	'rb-header1': '<div class="container ">\
 			<div class="ant-radio-group ant-radio-group-large rb-float-left">\
 				<label data-usr="m" class="cmdFlag ant-radio-button-wrapper {mChecked}"><span class="ant-radio-button ant-radio-button-checked"><span class="ant-radio-button-inner"></span></span><span><img class="language-flag" src="css/img/au.png" alt="au" title="Australia"></span></label>\
 				<label data-usr="w" class="cmdFlag ant-radio-button-wrapper {wChecked}"><span class="ant-radio-button"><span class="ant-radio-button-inner"></span></span><span><img class="language-flag" src="css/img/ru.png" alt="ru" title="Russia"></span></label>\
@@ -219,10 +219,10 @@ var templates = {
 				<div class="box-content">\
 					<table class="box-table box-picture-meta">\
 						<tbody><tr>\
-							<td><strong>Profile</strong><br>_onum_<sup></sup></td>\
-							<td><strong>Age</strong><br>_age_</td>\
-							<td><strong>Children</strong><br>_nkids_</td>\
-							<td><strong>_langName_</strong><br>_engurov_</td>\
+							<td>Profile<br><b>_onum_</b><sup></sup></td>\
+							<td>Age<br><b>_age_</b></td>\
+							<td>Children<br><b>_nkids_</b></td>\
+							<td>_langName_<br><b>_engurov_</b></td>\
 						</tr></tbody>\
 					</table>\
 				</div>\
@@ -237,7 +237,28 @@ var templates = {
 		</div>\
 	</div>'
 	,
-
+	'footer-wrapper': '<div class="footer">\
+		<div class="footer-inner">\
+			<div class="footer-bottom">\
+				<div class="container">\
+					<nav class="clearfix">\
+						<ul class="nav navbar-nav footer-nav">\
+							<li><a href="index.html">Main</a></li>\
+							<li><a href="catalogue.html">Catalogue</a></li>\
+							<li><a href="service.html">Service and Prices</a></li>\
+						</ul>\
+					</nav>\
+					<div class="copyright">\
+						<div>RUSSIAN BRIDES (Australia) A.C.N. 101 458 324</div>\
+						<div>Address: 608 B, 434 St Kilda Rd, Melbourne</div>\
+						<div>Victoria, Australia 3004.</div>\
+						<div>2000<span class="curYear">-2018</span> © Copyright.</div>\
+					</div>\
+				</div>\
+			</div>\
+		</div>\
+	</div>\
+	'
 };
 
 var Util = {
@@ -546,6 +567,13 @@ console.log('cmd', cmd, json);
 Util.urlParams = urlParams;
 
 Util.refreshMenu();
+var name = 'footer-wrapper',
+	node = Util.getNode(name);
+if (node) {
+	var str = templates[name];
+	node.innerHTML = str;
+}
+
 
 for (var i = 0, list = Util.getNodes('ant-input'), len = list.length; i < len; i++) {
 	var target = list[i],
@@ -854,7 +882,8 @@ var Galer = {
 				func = tab === name ? L.DomUtil.addClass : L.DomUtil.removeClass;
 
 			func(it, 'active');
-			func(document.getElementById(name), 'active');
+			func(Util.getNode('tab-' + name), 'active');
+			//func(document.getElementById(name), 'active');
 		}
 // console.log('_clickTab __', tab);
 	},
