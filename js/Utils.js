@@ -2,27 +2,234 @@
     'use strict';
 
 window.B = window.B || {};
-var arr = location.search.split('&'),
-	len = arr.length,
-	out = {par: {}};
-if (arr[0].indexOf('?') === 0) arr[0] = arr[0].substr(1);
-if (arr[len - 1].indexOf('#') === 0) {
-	out.achor = arr[len - 1].substr(1);
-	len--;
-}
-for (var i = 0; i < len; i++) {
-	var pv = arr[i].split('=');
-	out.par[pv[0]] = pv[1];
-}
-var urlParams = out;
+var myAttr = {};
+var localeUtils = {
+	isAdvancedUpload: function() {
+		var div = document.createElement('div');
+		return (('draggable' in div) || ('ondragstart' in div && 'ondrop' in div)) && 'FormData' in window && 'FileReader' in window;
+	},
+	saveLocale: function(it) {
+		if (it) { L.extend(myAttr.myLocale, it); }
+		localStorage._rbLocale = JSON.stringify(myAttr.myLocale);
+	},
+	getLocale: function() {
+		var arr = navigator.languages,
+			len = arr.length,
+			isRus = false;
+	
+		for (var i = 0; i < len; i++) {
+			if (arr[i].indexOf('ru') === 0) {isRus = true; break;}
+		}
+		var myLocale = {};
+		if (localStorage._rbLocale) {
+			myLocale = JSON.parse(localStorage._rbLocale);
+		} else {
+			myLocale = {
+				usr: isRus ? 'w' : 'm',
+				lastPage: location.href,
+				isRus: isRus
+			};
+		}
+		return myLocale;
+	},
+	needProfile: function() {
+		var arr = ['profile.html'],
+			len = arr.length;
+		for (var i = 0; i < len; i++) {
+			if (location.href.indexOf(arr[i]) > -1) {return true;}
+		}
+		return false;
+	},
+	getUrlParams: function() {
+		var out = {par: {}};
+		if (location.search) {
+			var arr = location.search.split('&'),
+				len = arr.length;
+			if (arr[0].indexOf('?') === 0) arr[0] = arr[0].substr(1);
+			if (arr[len - 1].indexOf('#') === 0) {
+				out.achor = arr[len - 1].substr(1);
+				len--;
+			}
+			for (var i = 0; i < len; i++) {
+				var pv = arr[i].split('=');
+				if (pv.length > 1) out.par[pv[0]] = pv[1];
+			}
+		}
+		return out;
+	}
+};
+
+myAttr.urlParams = localeUtils.getUrlParams();
+myAttr.needProfile = localeUtils.needProfile();
+myAttr.myLocale = localeUtils.getLocale();
+myAttr.isAdvancedUpload = localeUtils.isAdvancedUpload();
+
+console.log('myAttr', myAttr)
 
 var host = '//russianbrides.com.au',
 	cgiURLauth = host + '/cgi/publ/auth.pl',
 	cgiURL = host + '/cgi/publ/nserv.pl',
 	auth = {
-		usr: urlParams.par.usr || 'm'
+		usr: myAttr.urlParams.par.usr || myAttr.myLocale.usr || 'm'
 	};
 // var prefixURL = 'http://russianbrides.com.au/cgi/nserv.pl';
+			
+var translates = {
+	country: {
+		title: 'Страна:'
+	},
+	city: {
+		title: 'Город:',
+		size: 200
+	},
+	state: {
+		hidden: true
+	},
+	addru: {
+		title: 'Адрес:',
+		size: 200
+	},
+	whatsapp: {
+		title: 'Пользуюсь WhatsApp:',
+		size: 90
+	},
+	bdate: {
+		title: 'Дата рождения:',
+		size: 90
+	},
+	nkids: {
+		title: 'Количество детей:',
+		size: 90
+	},
+	hight: {
+		title: 'Рост в сантиметрах:',
+		size: 90
+	},
+	weight: {
+		title: 'Вес в киллограмах:',
+		size: 90
+	},
+	zodiac: {
+		title: 'Знак Зодиака:',
+		size: 90,
+		options: [
+			{value:'Capricorn', text:'Козерог'},
+			{value:'Aquarius', text:'Водолей'},
+			{value:'Pisces', text:'Рыбы'},
+			{value:'Aries', text:'Овен'},
+			{value:'Taurus', text:'Телец'},
+			{value:'Gemini', text:'Близнецы'},
+			{value:'Cancer', text:'Рак'},
+			{value:'Leo', text:'Лев'},
+			{value:'Virgo', text:'Дева'},
+			{value:'Libra', text:'Весы'},
+			{value:'Scorpio', text:'Скорпион'},
+			{value:'Sagittarius', text:'Стрелец'}
+		]
+	},
+	Drinking: {
+		title: 'Алкоголь:',
+		size: 90,
+		options: [
+			{value:'Never drink', text:'Не пью совсем'},
+			{value:'Socially', text:'За компанию (socially)'},
+			{value:'Occasionally', text:'Время от времени'},
+			{value:'Frequently', text:'Часто'}
+		]
+	},
+	Smoking: {
+		title: 'Курение:',
+		size: 90,
+		options: [
+			{value:'Non-Smoker', text:'Не курю'},
+			{value:'Socially', text:'За компанию (socially)'},
+			{value:'Occasionally', text:'Курю иногда'},
+			{value:'Regularly', text:'Курю регулярно'}
+		]
+	},
+	EyeColor: {
+		title: 'Цвет глаз:',
+		size: 90,
+		options: [
+			{value:'Gray', text:'Серые'},
+			{value:'Blue gray', text:'Серо-голубые'},
+			{value:'Green gray', text:'Серо-зеленые'},
+			{value:'Blue', text:'Голубые'},
+			{value:'Turquoise', text:'Бирюзовые'},
+			{value:'Brown', text:'Карие'},
+			{value:'Hazel', text:'Светло-карие'},
+			{value:'Dark brown', text:'Темно-карие'},
+			{value:'Black', text:'Черные'},
+			{value:'Green', text:'Зеленые'},
+			{value:'Blue green', text:'Голубо-зеленые'}
+		]
+	},
+	HairColor: {
+		title: 'Цвет волос:',
+		size: 90,
+		options: [
+			{value:'Blonde', text:'Блондинка'},
+			{value:'Auburn', text:'Каштановый'},
+			{value:'Hazel', text:'Русый'},
+			{value:'Brown', text:'Темно-русый, шатенка'},
+			{value:'Dark brown', text:'Темно-коричневый'},
+			{value:'Black', text:'Брюнетка (черный)'},
+			{value:'Redhead', text:'Рыжий'},
+			{value:'Silver', text:'Пепельный'},
+			{value:'White', text:'Белый (седые)'}
+		]
+	},
+	Occupation: {
+		title: 'Cфера деятельности:',
+		size: 90,
+		options: [
+			{value:'Education', text:'Образование'},
+			{value:'Scientific', text:'Наука'},
+			{value:'Healthcare', text:'Здравоохранение'},
+			{value:'Hospitality, Travel &amp; Tourism', text:'Туризм'},
+			{value:'IT &amp; Telecommunications', text:'IT, телекоммуникации'},
+			{value:'Accounting', text:'Бухгалтерия'},
+			{value:'Banking &amp; Finance', text:'Финансы, банковское дело'},
+			{value:'Administration', text:'Управление, администрирование'},
+			{value:'Management', text:'Менеджмент'},
+			{value:'Human Resources', text:'Подбор кадров'},
+			{value:'Advertising', text:'Реклама'},
+			{value:'Not categorised', text:'Другое'}
+		]
+	},
+	edu: {
+		title: 'Образование:',
+		size: 90,
+		options: [
+			{value:'University', text:'Высшее'},
+			{value:'College', text:'Среднее специальное'},
+			{value:'School', text:'Школа'},
+			{value:'Student', text:'Учусь сейчас'}
+		]
+	},
+	marital: {
+		title: 'Семейное положение:',
+		size: 90,
+		options: [
+			{value:'Single', text:'Не замужем'},
+			{value:'Divorced', text:'Разведена'},
+			{value:'Separated', text:'Расстались'},
+			{value:'Widow', text:'Вдова'},
+			{value:'Married', text:'Замужем'}
+		]
+	},
+	engurov: {
+		title: 'Уровень английского:',
+		size: 90,
+		options: [
+			{value:'Beginner', text:'Новичок'},
+			{value:'Intermediate', text:'Средний уровень'},
+			{value:'Advanced', text:'Продвинутый уровень'},
+			{value:'Fluent', text:'Свободно'}
+		]
+	}
+};
+
 var templates = {
 	'rb-header1': '<div class="container ">\
 			<div class="ant-radio-group ant-radio-group-large rb-float-left">\
@@ -36,7 +243,9 @@ var templates = {
 			<ul class="header-submenu pull-right rb-signed-on collapse">\
 				<li>\
 					<span class="fa fa-sign-out cmdSignOut"><span class="rb-pointer" title="Sign Out">Logout</span></span>\
-					<span class="mail-User-Picture js-user-picture is-updated rb-edit-profile"></span>\
+					<span class="" style="top: 6px;position: relative;display: inline-flex;">\
+						<a class="" href="profile.html?usr={usr}"><span class="mail-User-Picture js-user-picture is-updated rb-edit-profile"></span></a>\
+					</span>\
 				</li>\
 			</ul>\
 		</div>\
@@ -266,6 +475,10 @@ var Util = {
 		email: /^[-._a-z0-9]+@(?:[a-z0-9][-a-z0-9]+\\.)+[a-z]{2,6}$/,
 		test: /^[\\w]+$/
 	},
+	reg: {
+		email: /^[-._a-z0-9]+@(?:[a-z0-9][-a-z0-9]+\\.)+[a-z]{2,6}$/,
+		test: /^[\\w]+$/
+	},
 	getNodes: function(name, fromNode) {
 		return (fromNode || document).getElementsByClassName(name);
 	},
@@ -294,7 +507,7 @@ var Util = {
 			cmd = node.getAttribute('data-key'),
 			formName = cmd + '-form',
 			form = Util.getNode(cmd + '-form'),
-			par = {cmd: cmd, usr: auth.usr};
+			par = {cmd: cmd, usr: myAttr.urlParams.par.usr || auth.usr};
 		if (form && form.length) {
 			for (var i = 0, len = form.length; i < len; i++) {
 				var it = form[i],
@@ -307,6 +520,9 @@ var Util = {
 				par.uForgot = 1;
 			} else if (cmd === 'register') {
 				par.uForgot = 1;
+			}
+			if (myAttr.needProfile) {
+				par.uAttr = 1;
 			}
 
 			return L.gmxUtil.requestJSONP(cgiURLauth, par, {callbackParamName: 'callback'}).then(function(json) {
@@ -441,17 +657,49 @@ console.log('cmd', cmd, json);
 			nodeOn = Util.getNode('rb-signed-on');
 		if (profile) {
 			auth = profile;
+			if(profile.pdata) {
+				if(!profile.pdata.images) {
+					var arr = [],
+						name = '_jpg2',
+						it = profile[name] || profile.pdata[name];
+					if(it) {arr.push(it);}
+					name = '_jpg1';
+					it = profile[name] || profile.pdata[name];
+					if(it) {arr.push(it);}
+					name = '_jpg3';
+					it = profile[name] || profile.pdata[name];
+					if(it) {arr.push(it);}
+					profile.pdata.images = arr;
+				}
+				profile.pName = profile.fname.charAt(0).toUpperCase() + profile.fname.slice(1) + ' ' + profile.sname.charAt(0).toUpperCase() + '.';
+				if (!profile.bdate) {
+					profile.bdate = (profile.pdata.dd || '01') + '/' + (profile.pdata.mm || '12') + '/' + (profile.pdata.yy || '1960');
+				}
+			}
+			myAttr.profile = profile;
 			L.DomUtil.removeClass(nodeOn, 'collapse');
 			L.DomUtil.addClass(nodeOff, 'collapse');
 			Util._togglePaypal(profile);
+			if (profile.pdata) {
+				Util._chkProfile(profile);
+			}
 		} else {
 			auth = {};
-			auth.usr = urlParams.par.usr || 'm';
+			auth.usr = auth.usr || 'm';
 			L.DomUtil.removeClass(nodeOff, 'collapse');
 			L.DomUtil.addClass(nodeOn, 'collapse');
 			Util._togglePaypal();
+			if (location.href.indexOf('index.html') === -1) {location.href = 'index.html';}
 		}
+		localeUtils.saveLocale({usr: auth.usr});
 		Util.cmdClose();
+	},
+	_chkProfile: function(it) {
+		var detail = Util.getNode('rb-item-detail'),
+			form = Util.getNode('rb-form-profile');
+		Galer._putImageSrc(it, detail, 1);
+		Galer._putItem(it, detail, form);
+
 	},
 	cmdSignOut: function() {
 		Util.cmdClose();
@@ -552,19 +800,20 @@ console.log('cmd', cmd, json);
 		var node = ev.currentTarget,
 			attrName = 'data-usr',
 			usr = node.attributes[attrName] && node.attributes[attrName].value;
-		if (urlParams.par.usr) {
+		auth.usr = usr;
+		localeUtils.saveLocale({usr: auth.usr});
+		if (Util.urlParams.par.usr) {
 			location.href = location.href.replace(/usr=\w/, 'usr=' + usr);
 		} else {
 			location.href = location.origin + location.pathname + '?usr=' + usr;
 		}
-		auth.usr = usr;
 	},
 	_promises: {
 		_sessionKeys: {},
 		_maps: {}
 	}
 };
-Util.urlParams = urlParams;
+Util.urlParams = myAttr.urlParams;
 
 Util.refreshMenu();
 var name = 'footer-wrapper',
@@ -720,13 +969,13 @@ var Galer = {
 				byAge: 0
 			}
 		};
+		if (myAttr.needProfile) {
+			opt.params.uAttr = 1;
+		}
 		if (Util.urlParams.par.to) opt.params.nw = Util.urlParams.par.to;
 		var cont = Util.getNodes('galerList')[0];
 
 		return L.gmxUtil.requestJSONP(cgiURLauth, opt.params, {callbackParamName: 'callback'}).then(function(json) {
-			// return L.gmxUtil.requestJSONP(cgiURL, opt.params, {callbackParamName: 'callback'}).then(function(json) {
-				// return L.gmx.getJSON(cgiURL, opt).then(function(json) {
-
 			var galer = json.galer;
 			if (json.res) {
 				if (typeof(json.res) === 'string') {
@@ -748,6 +997,9 @@ var Galer = {
 			arr.forEach(function(it) {
 				it.pName = it.fname.charAt(0).toUpperCase() + it.fname.slice(1) + ' ' + it.sname.charAt(0).toUpperCase() + '.';
 				it.age = new Date().getFullYear() - new Date(it.yy || it.pdata.yy, (it.mm || it.pdata.mm) - 1).getFullYear();
+				if (it.bdate) {
+					it.age = it.bdate;
+				}
 				it.gender = opt.params.usr;
 				it.fullname = it.fname + ' ' + it.sname;
 				var addru = it.pdata.addru;
@@ -787,12 +1039,14 @@ var Galer = {
 		var jpg = '_jpg' + nm,
 			zn = it[jpg] || it.pdata[jpg];
 
-		var list = Util.getNodes('rb-src-jpg' + nm, node);
-		for (var i = 0, len = list.length; i < len; i++) {
-			var node1 = list[i];
-			node1.src = host + '/' + zn;
+		if (zn) {
+			var list = Util.getNodes('rb-src-jpg' + nm, node);
+			for (var i = 0, len = list.length; i < len; i++) {
+				var node1 = list[i];
+				node1.src = host + '/' + zn;
+			}
 		}
-// console.log('_ _putImageSrc __', it);
+	// console.log('_ _putImageSrc __', it);
 	},
 	_putHref: function(zn, className, node) {
 		node = node || Galer.rbItemDetail;
@@ -809,21 +1063,188 @@ var Galer = {
 		}
 // console.log('_ _putImageSrc __', it);
 	},
-	_putItem: function(it, node) {
+	_putItem: function(it, node, form) {
 		node = node || Galer.rbItemDetail;
 		var arr = Object.keys(it.pdata).concat(Object.keys(it));
-
+		arr.push('bdate');
+		arr.push('whatsapp');
+		
 		arr.forEach(function(key) {
+			var trn = translates[key];
 			var list = Util.getNodes('rb-item-' + key, node),
 				zn = it[key] || it.pdata[key];
 			for (var i = 0, len = list.length; i < len; i++) {
 				list[i].innerHTML = zn;
 			}
-			if(key === 'engurov' && auth.usr === 'w') {
-				list[0].parentNode.firstChild.innerHTML = 'Russian level: ';
+			if(form && form[key]) {
+				var n = form[key],
+					tagName = n.tagName.toLowerCase();
+				if (trn) {
+					if (trn.title) {
+						n.parentNode.firstChild.textContent = trn.title;
+					}
+					if (trn.options) {
+						n.options.length =  trn.options.length;
+	
+						for (var i = 0, len = trn.options.length; i < len; i++) {
+							var pt = trn.options[i],
+								opt = n.options[i];
+							if (!opt) {
+								opt = document.createElement("option");
+								n.add(opt);
+							}
+							if (pt.value) opt.value = pt.value;
+							if (pt.text) opt.text = pt.text;
+							if (pt.selected === zn) {
+								n.selectedIndex = i;
+							}
+						}
+						// for (var i = 0, len = lenOld; i < len; i++) {
+						// 	n.remove(i);
+						// }
+					}
+					if (trn.size) {
+						n.style.width = trn.size + 'px';
+					}
+					
+				}
+				if(tagName === 'select') {
+					for (var i = 0, len = n.options.length; i < len; i++) {
+						var opt = n.options[i];
+						if (opt.value === zn) {
+							n.selectedIndex = i;
+							break;
+						}
+					}
+				} else if(tagName === 'input') {
+					n.value = zn || 'no';
+				}
+				if(key === 'country') {
+					// list[0].parentNode.firstChild.innerHTML = 'Russian level: ';
+				}
 			}
 		});
+		if(it.usr === 'm') {
+			// if(key === 'state') {
+				//L.DomUtil.addClass(, 'collapse')
+				// 	list[0].parentNode.firstChild.innerHTML = 'Russian level: ';
+			// }
+			// if(key === 'addru') {
+				// 	list[0].parentNode.firstChild.innerHTML = 'Russian level: ';
+			// }
+		} else {
+			if(form && form.state) {
+				L.DomUtil.addClass(form.state.parentNode, 'collapse')
+			}
+		}
+		if (node) {
+			Galer._refreshImages(it.pdata.images);
+		}
 	},
+	_refreshImages: function(images, active) {
+		var detail = Util.getNode('rb-item-detail'),
+			form = Util.getNode('rb-form-profile', detail),
+			rbImages = Util.getNode('rb-images', detail),
+			nm = 0,
+			out = [];
+
+		if (active) {myAttr.activeImage = active;}
+		active = myAttr.activeImage || 1;
+
+		for(var i = 0, len = images.length; i < len; i++) {
+			nm++;
+			var st = '<li title="'+ nm +'" class="ant-pagination-item ant-pagination-item-'+ nm;
+			if (active === nm) {st += ' ant-pagination-item-active';}
+			st += '" tabindex="0"><a>'+ nm +'</a></li>';
+			out.push(st);
+		}
+		myAttr.dopFiles = myAttr.dopFiles || {};
+		for(var key in myAttr.dopFiles) {
+			if (nm < 10) {
+				nm++;
+				var st = '<li title="'+ nm +'" class="ant-pagination-item ant-pagination-item-'+ nm;
+				if (active === nm) {st += ' ant-pagination-item-active';}
+				st += '" tabindex="0" data-key="'+ key +'"><a>'+ nm +'</a></li>';
+				out.push(st);
+			}
+		}
+
+		if (nm < 10) {
+			out.push('<li tabindex="0" class="ant-pagination-item " role="button">\
+				<input type="file" accept="" id="file" multiple style="display: none;" />\
+				<label for="file" class="ant-btn" style="padding-top: 4px;">\
+					<i class="anticon anticon-upload" style="padding-top: 3px;"></i><span>upload or drag file</span>\
+				</label>\
+			</li>');
+		}
+
+		rbImages.innerHTML = out.join('\n');
+		for (var i = 0; i < nm; i++) {
+			L.DomEvent.on(rbImages.children[i], 'click', Galer._clickProfileImage);
+		}
+		if (nm < 10) {
+			L.DomEvent.on(rbImages.children[rbImages.children.length - 1], 'change', Galer._changeProfileImage);
+			if (myAttr.isAdvancedUpload) {
+				L.DomEvent
+					.on(form, 'drag dragstart dragend dragover dragenter dragleave drop', function(e) {
+						e.preventDefault();
+						e.stopPropagation();
+					})
+					.on(form, 'drop', function(ev) {
+						Galer._chkProfileImages(ev.dataTransfer.files);
+					});
+			}
+		}
+		Galer._setActiveProfileImage(rbImages.children[active - 1]);
+		
+
+	},
+	_chkProfileImages: function(files) {
+		// console.log('_chkProfileImages', files);
+		myAttr.dopFiles = myAttr.dopFiles || {};
+		var images = myAttr.profile.pdata.images,
+			len = files.length,
+			activeImage = images.length + Object.keys(myAttr.dopFiles).length + (len ? 1 : 0);
+		for (var i = 0; i < len; i++) {
+			var file = files[i];
+			myAttr.dopFiles[file.name + '_' + file.size + '_' + file.lastModified] = file;
+		}
+		Galer._refreshImages(images, activeImage);
+	},
+	_changeProfileImage: function(ev) {
+		Galer._chkProfileImages(ev.target.files);
+		//console.log('_changeProfileImage', res);
+	},
+	_setActiveProfileImage: function(node) {
+		var title = node.title;
+		var arr = /\d+/.exec(title);
+		if (arr && arr.length) {
+			var nm = Number(arr[0]);
+			myAttr.activeImage = nm;
+			var detail = Util.getNode('rb-item-detail'),
+				images = myAttr.profile.pdata.images,
+				rbImages = Util.getNode('rb-images', detail),
+				imgNode = Util.getNode('rb-src-jpg1', detail);
+
+			if (nm > images.length) {
+				var file = myAttr.dopFiles[node.attributes['data-key'].value];
+				var reader = new FileReader();
+				reader.onload = function (e) {imgNode.src = e.target.result;};
+				reader.readAsDataURL(file);
+			} else {
+				imgNode.src = host + '/' + images[nm - 1];
+			}
+			for (var i = 0, len = rbImages.children.length; i < len; i++) {
+				L.DomUtil[(myAttr.activeImage == i + 1 ? 'addClass' : 'removeClass')](rbImages.children[i], 'ant-pagination-item-active');
+			}
+		}
+	},
+	_clickProfileImage: function(ev) {
+		var target = ev.target,
+			node = target.tagName.toLowerCase() === 'li' ? target : target.parentNode;
+		Galer._setActiveProfileImage(node);
+	},
+
 	_curNum: null,
 	getItem: function(num) {
 		return Galer.galer[num || Galer._curNum];
