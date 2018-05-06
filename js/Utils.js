@@ -1213,14 +1213,18 @@ var Galer = {
 				formData.append(name, it.file);
 			}
 		}
-
+		formData.append('onum', profile.onum);
+		formData.append('usr', profile.usr);
+		formData.append('json', 1);
+		formData.append('profile', 1);
+		
 		console.log('saveProfile', myAttr, formData);
 		fetch(cgiURLauth, {
-			method: 'PUT',
+			method: 'POST',
 			mode: 'cors',
 			redirect: 'follow',
 			credentials: 'include',
-			headers: {'Content-type': 'application/x-www-form-urlencoded'},
+			//headers: {'Content-type': 'application/x-www-form-urlencoded'},
 			body: formData
 		  })
 		  .then(function(response) {return response.json();})
