@@ -34,9 +34,7 @@
 				<div class="main-inner">
 					<div class="container rb-item-detail">
 						<div class="block-content rb-vert-10 rb-mtop-10">
-							<div class="rb-back-button">
-								<li title="Previous Page" class="ant-pagination-prev rb-button" tabindex="0"><a class="ant-pagination-item-link"></a></li>
-							</div>
+
 							<div class="block-content-inner">
 							<form class="rb-form-profile">
 								<h3 class="rb-line-after rb-width80">Profile #<span class="rb-item-onum"></span> (<span class="rb-item-pName"></span>)</h3>
@@ -53,15 +51,17 @@
 																	<img class="rb-src-jpg1" src="css/img/blankm.jpg" alt="">
 																	<!-- <span></span> -->
 																</a>
-<div class="rb-icons" style="margin-top: 4px;">
-	<div class="rb-left" style="float: left;">
-		<i class="anticon anticon-loading-3-quarters"></i>
-		<i class="anticon anticon-minus-circle-o"></i>
-		<i class="anticon anticon-plus-circle-o"></i>
-	</div>
-	<div class="rb-right" style="float: right;">
-		<i class="anticon anticon-close-circle"></i>
-	</div>
+<div class="rb-icons collapse">
+	<span class="rb-left" title="Rotate photo">
+		<i class="anticon anticon-loading-3-quarters cmdRotate"></i>
+	</span>
+	<span class="rb-center">
+		<i class="anticon anticon-minus-circle-o cmdZoomOut"></i>
+		<i class="anticon anticon-plus-circle-o cmdZoomIn"></i>
+	</span>
+	<span class="rb-right" title="Delete photo">
+		<i class="anticon anticon-close-circle cmdImageDel"></i>
+	</span>
 </div>
 															</div><!-- /.box-picture -->
 										<div class="col-sm-12">
@@ -95,7 +95,7 @@
 									<div class="col-sm-6">
 										<ul id="myTab" class="nav nav-tabs three rb-tab-nav">
 											<li class="active" tabName="overview"><a href="#myTab" data-toggle="tab">About</a></li>
-											<li class="" tabName="contact"><a href="#myTab" data-toggle="tab">Contacts</a></li>
+											<li class="collapse" tabName="contact"><a href="#myTab" data-toggle="tab">Contacts</a></li>
 										</ul>
 
 										<div id="myTabContent" class="tab-content">
@@ -514,6 +514,9 @@
 									</div>
 								</div><!-- /.row -->
 							</form>
+							<div class="rb-save-profile-button">
+								<li title="Previous Page" class="ant-pagination-prev rb-button cmdSaveProfile" tabindex="0"><a class="ant-pagination-item-link"></a></li>
+							</div>
 							</div><!-- /.block-content-inner -->
 						</div><!-- /.block-content -->
 					</div>

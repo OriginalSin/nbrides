@@ -447,7 +447,37 @@
 .rb-form-profile .ant-table-pagination {
 	margin: 0px;
 }
- 
+.rb-form-profile li {
+	padding-bottom: 4px
+}
+
+.rb-icons {
+    text-align: center;
+}
+.rb-icons span {
+    cursor: pointer;
+}
+.rb-icons .rb-center {
+	visibility: hidden;
+    margin-right: 0px;
+    margin-left: 0px;
+}
+.rb-icons .rb-left {
+	position: absolute;
+    left: 0px;
+}
+.rb-icons .rb-right {
+	position: absolute;
+    right: 0px;
+}
+.rb-save-profile-button {
+	text-align: center;
+}
+.rb-save-profile-button .ant-pagination-prev a:after {
+	font-size: 20px;
+	content: "Save";
+}
+
 /*
 @media (min-width: 992px) {
 	.col-md-3 {
