@@ -81,9 +81,9 @@
 																	<li><span class="dot">Surname: </span><input name="sname" style="margin-right: 20px;" /></li>
 																</ul>
 																<span>About Me:</span><br>
-																<textarea class="rb-item-you" style="width: 282px;"></textarea><br>
+																<textarea name="you" class="rb-item-you" style="width: 282px;"></textarea><br>
 																<span>Looking for:</span><br>
-																<textarea class="rb-item-him" style="width: 282px;"></textarea>
+																<textarea name="him" class="rb-item-him" style="width: 282px;"></textarea>
 															</div><!-- /.box-body -->
 														</div><!-- /.row -->
 													</div>
@@ -129,7 +129,6 @@
 															<li><span class="dot">Date of Birth: </span><input name="bdate" placeholder="DD/MM/YYYY" class="" /></li>
 															<li><span class="dot">Eye Colour: </span>
               <select name="EyeColor">
-                <option value="0">-Choose-</option>
                 <option>Blue</option>
                 <option>Brown</option>
                 <option>Dark brown</option>
@@ -144,7 +143,6 @@
 															</li>
 															<li><span class="dot">Hair Colour: </span>
               <select name="HairColor">
-                <option value="0">-Choose-</option>
                 <option>Auburn</option>
                 <option>Black</option>
                 <option>Blonde</option>
@@ -163,7 +161,6 @@
 															<li><span class="dot">Use WhatsApp: </span><input name="whatsapp" class="" /></li>
 															<li><span class="dot">Marital status: </span>
 <select name="marital">
-                <option value="0">-Choose-</option>
                 <option>Single</option>
                 <option>Divorced</option>
                 <option>Separated</option>
@@ -174,7 +171,6 @@
 															<li><span class="dot">Number of children: </span><input name="nkids" class="rb-item rb-item-nkids" /></li>
 															<li><span class="dot">Education: </span>
 			<select name="edu">
-                <option value="0">-Choose-</option>
                 <option>University</option>
                 <option>College</option>
                 <option>Student</option>
@@ -183,7 +179,6 @@
 															</li>
 															<li><span class="dot">Occupation: </span>
 			<select name="Occupation">
-                <option value="0">-Choose-</option>
               <option>Accounting</option>
                 <option>Administration</option>
                 <option>Advertising</option>
@@ -213,7 +208,6 @@
 															</li>
 															<li><span class="dot">Smoking habits: </span>
 <select name="Smoking">
-                <option value="0">-Choose-</option>
                 <option>Non-Smoker</option>
                 <option>Socially</option>				
                 <option>Occasionally</option>
@@ -222,7 +216,6 @@
 															</li>
 															<li><span class="dot">Drinking habits: </span>
 <select name="Drinking">
-                <option value="0">-Choose-</option>
                 <option>Socially</option>
                 <option>Occasionally</option>
                 <option>Frequently</option>
@@ -231,7 +224,6 @@
 															</li>
 															<li><span class="dot">Zodiac: </span>
               <select name="zodiac">
-                <option value="0">-Choose-</option>
                 <option>Capricorn</option>
                 <option>Aquarius</option>
                 <option>Pisces</option>
@@ -247,6 +239,8 @@
               </select>
 															</li>
 															<li><span class="dot">Country: </span><select name="country">
+<option value="Australia">Australia</option>
+<option value="New Zealand">New Zealand</option>
 <option value="Afghanistan">Afghanistan</option>
 <option value="Albania">Albania</option>
 <option value="Algeria">Algeria</option>
@@ -486,7 +480,6 @@
 <option value="Zimbabwe">Zimbabwe</option>
               </select></li>
 															<li><span class="dot">State: </span><select name="state" size="1">
-                <option value="0">-Choose-</option>
                 <option>ACT</option>
                 <option>QLD</option>
                 <option>NSW</option>				
@@ -501,9 +494,8 @@
 															<li><span class="dot">Адрес: </span><input name="addru" class="rb-item rb-item-addru" /></li>
 															<li><span class="dot">Do you speak Russian?: </span>
 			<select name="engurov">
-                <option value="0">-Choose- </option>
-				<option>Yes</option>
                 <option>No</option>
+				<option>Yes</option>
 			</select>
 															</li>
 														</ul>
