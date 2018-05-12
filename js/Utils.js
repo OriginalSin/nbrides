@@ -244,7 +244,7 @@ var templates = {
 				<li>\
 					<span class="fa fa-sign-out cmdSignOut"><span class="rb-pointer" title="Sign Out">Logout</span></span>\
 					<span class="" style="top: 6px;position: relative;display: inline-flex;">\
-						<a class="" href="profile.html?usr={usr}"><span class="mail-User-Picture js-user-picture is-updated rb-edit-profile"></span></a>\
+						<a title="Edit profile" href="profile.html?usr={usr}"><span class="mail-User-Picture js-user-picture is-updated rb-edit-profile"></span></a>\
 					</span>\
 				</li>\
 			</ul>\
@@ -269,7 +269,7 @@ var templates = {
 				<li class="menuparent"><a href="index.html?usr={usr}&onum={onum}">Home</a></li>\
 				<li class="menuparent"><a href="catalogue.html?usr={usr}">Catalogue</a></li>\
 				<li class="menuparent"><a href="service.html">Service and Prices</a></li>\
-				<li class="menuparent  columns4"><a href="#">Contact</a>\
+				<li class="menuparent columns4"><a href="#">Contact</a>\
 					<ul>\
 						<li><a href="service.html">Service and Prices</a></li>\
 						<li><a href="listing-grid.html">Grid Version</a></li>\
@@ -479,6 +479,16 @@ var Util = {
 		email: /^[-._a-z0-9]+@(?:[a-z0-9][-a-z0-9]+\\.)+[a-z]{2,6}$/,
 		test: /^[\\w]+$/
 	},
+	loadSvgSprite: function(url) {
+		fetch(url, {mode: 'cors'}).then(function(resp) {
+			return resp.text();
+		}).then(function(txt) {
+			var div = document.createElement('div');
+			div.style.display = 'none';
+			div.innerHTML = txt;
+			document.body.insertBefore(div, document.body.childNodes[0]);
+		});
+	},
 	getNodes: function(name, fromNode) {
 		return (fromNode || document).getElementsByClassName(name);
 	},
@@ -501,6 +511,12 @@ var Util = {
 		}
 		// console.log('_parseList', list);
 	},
+	_getLocation: function() {
+		var url = '//ip-api.com/json/' + myAttr.ip;
+		L.gmxUtil.requestJSONP(url, {}, {callbackParamName: 'callback'}).then(function(json) {
+			myAttr.addr = json;
+		});
+},
 	cmdSave: function(ev) {
 		// value.search(reg) === -1
 		var node = ev.target,
@@ -520,6 +536,7 @@ var Util = {
 				par.uForgot = 1;
 			} else if (cmd === 'register') {
 				par.uForgot = 1;
+				par.addr = JSON.stringify(myAttr.addr);
 			}
 			if (myAttr.needProfile) {
 				par.uAttr = 1;
@@ -527,7 +544,7 @@ var Util = {
 
 			return L.gmxUtil.requestJSONP(cgiURLauth, par, {callbackParamName: 'callback'}).then(function(json) {
 				var pt = json.AUTH;
-console.log('cmd', cmd, json);
+// console.log('cmd', cmd, json);
 				if (cmd === 'login') {
 					Util._toggleLogin(pt.err ? null : pt);
 				} else if (cmd === 'register') {
@@ -570,15 +587,20 @@ console.log('cmd', cmd, json);
 			Util.cmdClose();
 		}
 	},
+	cmdChangeImage: function(ev) {
+		var target = ev.target;
+		Galer.nextImage(L.DomUtil.hasClass(target, 'right'));
+	},
 	cmdSaveProfile: function(ev) {
 		Galer.saveProfile();
 	},
 	_setTransform: function(it, node) {
-		var transform = '';
-		if (it.rotate) {
-			it.rotate %= 360;
-			transform += 'rotate(' + it.rotate + 'deg)';
-		}
+		var transform = '',
+			rotate = it.rotate || 0;
+		// if ('rotate' in it) {
+			rotate %= 360;
+			transform += 'rotate(' + rotate + 'deg)';
+		// }
 		if (it.scale) {
 			transform += 'scale(' + it.scale + ')';
 		}
@@ -592,20 +614,20 @@ console.log('cmd', cmd, json);
 		Galer._refreshImages(myAttr.profile.pdata.images);
 		console.log('cmdImageDel',it, myAttr.dopFiles, myAttr.profile.pdata.images)
 	},
-	cmdZoomOut: function() {
-		var it = Galer._getImageItem();
-		it.scale = (it.scale || 1) - 0.1;
-		Util._setTransform(it, Util.getNode('rb-src-jpg1', Util.getNode('rb-item-detail')));
-	},
-	cmdZoomIn: function() {
-		var it = Galer._getImageItem();
-		it.scale = (it.scale || 1) + 0.1;
-		Util._setTransform(it, Util.getNode('rb-src-jpg1', Util.getNode('rb-item-detail')));
-	},
+	// cmdZoomOut: function() {
+	// 	var it = Galer._getImageItem();
+	// 	it.scale = (it.scale || 1) - 0.1;
+	// 	Util._setTransform(it, Util.getNode('rb-src-jpg2', Util.getNode('rb-item-detail')));
+	// },
+	// cmdZoomIn: function() {
+	// 	var it = Galer._getImageItem();
+	// 	it.scale = (it.scale || 1) + 0.1;
+	// 	Util._setTransform(it, Util.getNode('rb-src-jpg2', Util.getNode('rb-item-detail')));
+	// },
 	cmdRotate: function() {
 		var it = Galer._getImageItem();
 		it.rotate = (it.rotate || 0) - 90;
-		Util._setTransform(it, Util.getNode('rb-src-jpg1', Util.getNode('rb-item-detail')));
+		Util._setTransform(it, Util.getNode('rb-src-jpg2', Util.getNode('rb-item-detail')));
 	},
 	
 	cmdHerAddress: function(ev) {
@@ -649,32 +671,17 @@ console.log('cmd', cmd, json);
 		if (opt.needSign) {
 			Util.getNode('error-title', node).innerHTML = 'Please enter your ID and Password to Sign in';
 		}
-		
 		// console.log('cmdRegister', Util._needClose);
-		// console.log(node);
 	},
 	cmdRegister: function() {
+		Util._getLocation();
 		Util._prpModal('registerDialog');
 	},
 	cmdSign: function(ev, email) {
 		Util._prpModal('signDialog', {email: email});
 	},
-	// cmdSign1: function(ev, email) {
-	// 	Util.cmdClose();
-	// 	var node = Util.getNode('signDialog');
-	// 	Util._needClose = [Util.getNode('ant-modal-mask', node), Util.getNode('ant-modal-wrap', node)];
-	// 	Util._parseList(Util._needClose, L.DomUtil.removeClass);
-	// 	if (email) {
-	// 		Util.getNode('error-title', node).innerHTML = 'Check your E-mail: ' + email + ' and Sign In';
-	// 	}
-		
-	// },
 	cmdForgot: function() {
 		Util._prpModal('forgotDialog');
-		// Util.cmdClose();
-		// var node = Util.getNode('forgotDialog');
-		// Util._needClose = [Util.getNode('ant-modal-mask', node), Util.getNode('ant-modal-wrap', node)];
-		// Util._parseList(Util._needClose, L.DomUtil.removeClass);
 	},
 	_togglePaypal: function(flag) {
 		var addClass = 'paypal',
@@ -778,7 +785,6 @@ console.log('cmd', cmd, json);
 		if (explain) {
 			L.DomUtil.removeClass(explain, 'collapse');
 		}
-		
 		// console.log('_inputError', node, error);
 	},
 	onInputChange: function(ev) {
@@ -849,7 +855,7 @@ console.log('cmd', cmd, json);
 		auth.usr = usr;
 		localeUtils.saveLocale({usr: auth.usr});
 		if (Util.urlParams.par.usr) {
-			location.href = location.href.replace(/usr=\w/, 'usr=' + usr);
+			location.href = location.href.replace(/usr=\w/, 'usr=' + usr).replace(/to=\d+/, '');
 		} else {
 			location.href = location.origin + location.pathname + '?usr=' + usr;
 		}
@@ -869,7 +875,6 @@ if (node) {
 	node.innerHTML = str;
 }
 
-
 for (var i = 0, list = Util.getNodes('ant-input'), len = list.length; i < len; i++) {
 	var target = list[i],
 		type = target.getAttribute('data-key');
@@ -877,24 +882,19 @@ for (var i = 0, list = Util.getNodes('ant-input'), len = list.length; i < len; i
 	L.DomEvent.on(target, 'keypress', Util.onInputChange, Util);
 }
 
-['cmdTalk', 'cmdSaveProfile', 'cmdImageDel', 'cmdZoomOut', 'cmdZoomIn', 'cmdRotate', 'cmdHerAddress', 'cmdRegister', 'cmdSign', 'cmdSignOut', 'cmdForgot', 'cmdFlag', 'cmdClose', 'cmdSave', 'cmdCheckbox'].forEach(function(name) {
+['cmdTalk', 'cmdSaveProfile', 'cmdChangeImage', 'cmdImageDel', 'cmdZoomOut', 'cmdZoomIn', 'cmdRotate', 'cmdHerAddress', 'cmdRegister', 'cmdSign', 'cmdSignOut', 'cmdForgot', 'cmdFlag', 'cmdClose', 'cmdSave', 'cmdCheckbox'].forEach(function(name) {
 	for (var i = 0, list = Util.getNodes(name), len = list.length; i < len; i++) {
 		var node = list[i];
 		L.DomEvent.on(node, 'click', Util[name] || console.log, Util);
-		if (auth.usr !== 'm') {
+		var usr = myAttr.urlParams.par.usr || auth.usr;
+		if (usr !== 'm') {
 			if (name === 'cmdHerAddress') {
 				L.DomUtil.addClass(node.parentNode, 'collapse');
 			}
 		}
 	}
 });
-// L.gmx.getJSON(cgiURLauth, {
-// 	params: {json:1, uAttr:1, usr: auth.usr},
-// 	options: {type:'json'}
-// }).then(function(json) {
-// 	var pt = json.res.AUTH;
-// 	Util._toggleLogin(pt.err ? null : pt);
-// });
+Util.loadSvgSprite('css/rb.svg');
 
 window.B.Util = Util;
 
@@ -985,7 +985,7 @@ var Galer = {
 		if (n5) {					// Next 5
 			arr.push('<li title="Next 5 Pages" tabindex="0" class="ant-pagination-jump-next"><a class="ant-pagination-item-link"></a></li>');
 		}
-		if (cp !== lp) {			// Последняя
+		if (cp < lp) {			// Последняя
 			addLi(lp);
 		}
 		if (cp !== 1) {				// Первая
@@ -1010,7 +1010,7 @@ var Galer = {
 			},
 			params: {
 				cmd: 'gal',
-				usr: auth.usr,
+				usr: myAttr.urlParams.par.usr || auth.usr,
 				f: nm * 8,
 				byAge: 0
 			}
@@ -1031,6 +1031,7 @@ var Galer = {
 				galer = json.res.galer;
 			}
 			if (json.AUTH) {
+				myAttr.ip = json.AUTH.ip;
 				Util._toggleLogin(json.AUTH.err ? null : json.AUTH);
 			}
 			var out = [],
@@ -1054,7 +1055,7 @@ var Galer = {
 				}
 				it.address = addru + '<br>' + it.fullname;
 				it.talk = host + '/talk.html?usr=' + it.gender + '&onum=' + it.onum + '&ns=' + it.onum;
-				it.langName = auth.usr === 'w' ? 'Russian' : 'English';
+				it.langName = opt.params.usr === 'w' ? 'Russian' : 'English';
 				
 				var st = templates.galer1;
 				st = st.replace(/_(\w+)_/g, function(match, contents, offset, input_string) {
@@ -1083,16 +1084,10 @@ var Galer = {
 		nm = nm || 2;
 		node = node || Galer.rbItemDetail;
 		var jpg = '_jpg' + nm,
-			zn = it[jpg] || it.pdata[jpg];
+			zn = it[jpg] || it.pdata[jpg] || it.pdata._jpg1,
+			node1 = Util.getNode('rb-src-jpg2', node);
 
-		if (zn) {
-			var list = Util.getNodes('rb-src-jpg' + nm, node);
-			for (var i = 0, len = list.length; i < len; i++) {
-				var node1 = list[i];
-				node1.src = host + '/' + zn;
-			}
-		}
-	// console.log('_ _putImageSrc __', it);
+		if (node1) {node1.src = zn ? host + '/' + zn : './css/img/blank' + it.usr + '.jpg';}
 	},
 	_putHref: function(zn, className, node) {
 		node = node || Galer.rbItemDetail;
@@ -1111,6 +1106,9 @@ var Galer = {
 	},
 	_putItem: function(it, node, form) {
 		node = node || Galer.rbItemDetail;
+		if (!it.pdata.images) {
+			Util._prpItemImages(it);
+		}
 		var arr = Object.keys(it.pdata).concat(Object.keys(it));
 		arr.push('bdate');
 		arr.push('whatsapp');
@@ -1186,16 +1184,99 @@ var Galer = {
 			}
 		}
 		if (form) {
-			Util._prpItemImages(it);
+			//Util._prpItemImages(it);
 			Galer._refreshImages(it.pdata.images);
+		} else {
+			Galer.activeItem = it;
+			Galer.activeImage = 0;
+			var list = Util.getNodes('cmdChangeImage', node),
+				className = it.pdata.images.length > 1 ? 'removeClass' : 'addClass';
+			for (var i = 0, len = list.length; i < len; i++) {
+				L.DomUtil[className](list[i], 'collapse');
+			}
 		}
 	},
+	nextImage: function(flag) {
+		var node = Galer.rbItemDetail,
+			imgNode = Util.getNode('rb-src-jpg2', Galer.rbItemDetail),
+			images = Galer.activeItem.pdata.images,
+			nm = Galer.activeImage || 0;
+
+		nm += flag ? 1 : -1;
+		if (nm >= images.length) {
+			nm = 0;
+			//st += ' ant-pagination-item-active';
+		} else if (nm < 0) {
+			nm = images.length - 1;
+		}
+		imgNode.src = host + '/' + images[nm].src;
+		Galer.activeImage = nm;
+	},
+	_resizeImage: function(file, name) {
+		return new Promise(function(resolve) {
+			var img = new Image();
+			var reader = new FileReader();
+			reader.onload = function (e) {
+				img.src = e.target.result;
+			};
+			reader.readAsDataURL(file);
+			img.onload = function () {
+				var canvas = L.DomUtil.create('canvas'),
+					sl = (img.naturalWidth - 632) / 2,
+					st = (img.naturalHeight - 948) / 2,
+					scw = 632 / img.naturalWidth,
+					sch = 948 / img.naturalHeight,
+					sc = Math.min(scw, sch),
+					asp = 632 / 948;
+
+				canvas.width = img.naturalWidth * sc;
+				canvas.height = img.naturalHeight * sc; // / aspectRatio;
+				canvas.getContext('2d').drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight, 0, 0, canvas.width, canvas.height);
+				canvas.toBlob(function (blob) {
+					resolve({blob: blob, name: name});
+				}, 'image/jpeg');
+				/*	canvas.toBlob(function (blob) {
+						//var reader1 = new FileReader();
+					myAttr.dopFiles[file.name + '_' + file.size + '_' + file.lastModified] = {
+						file: blob
+					};
+					//reader1.readAsBinaryString(blob);
+					Galer._refreshImages(myAttr.profile.pdata.images, activeImage);
+				}, 'image/jpeg');*/
+			};
+		});
+
+/*
+		var canvas = L.DomUtil.create('canvas'),
+			sl = (632 - img.naturalWidth) / 2,
+			st = (948 - img.naturalHeight) / 2,
+			sc = Math.min(948 / img.naturalHeigh, 632 / img.naturalWidth),
+			asp = 632 / 948;
+
+		canvas.width = 632;
+		canvas.height = 948; // / aspectRatio;
+		canvas.getContext('2d').drawImage(img, sl, st, img.naturalWidth * sc, img.naturalHeigh * sc, 0, 0, 632, 948);
+		var reader = new FileReader();
+		return
+		canvas.toBlob(function (blob) {
+			var reader = new FileReader();
+		  
+			reader.onloadend = function () {
+			  console.log(reader.result);
+			}
+		  
+			reader.readAsBinaryString(blob);
+		  });
+		  */
+	},
+
 	saveProfile: function() {
 		var formData = new FormData(),
 			profile = myAttr.profile,
 			images = profile.pdata.images,
 			nm = Galer._getMaxNumImages(images),
-			rbImages = Util.getNode('rb-images', Util.getNode('rb-item-detail'));
+			rbImages = Util.getNode('rb-images', Util.getNode('rb-item-detail')),
+			arr = [];
 
 		for (var i = 0, len = rbImages.children.length; i < len; i++) {
 			var node = rbImages.children[i],
@@ -1204,14 +1285,15 @@ var Galer = {
 				nm++;
 				var it = myAttr.dopFiles[attrkey.value],
 					name = profile.onum + '_'  + nm + 'a.jpg';
-				formData.append(name, it.file);
+				//formData.append(name, it.file);
+				arr.push(Galer._resizeImage(it.file, name));
 				images.push({src: 'jpeg/' + profile.usr + '/0/' + name, rotate: it.rotate || 0});
 			}
 		}
+
 		formData.append('images', JSON.stringify(images));
 		formData.append('onum', profile.onum);
 		formData.append('usr', profile.usr);
-		formData.append('json', 1);
 		formData.append('json', 1);
 		formData.append('profile', 1);
 		var form = Util.getNode('rb-form-profile', Util.getNode('rb-item-detail'));
@@ -1220,21 +1302,30 @@ var Galer = {
 			formData.append(it.name, it.value);
 		}
 
-		console.log('saveProfile', myAttr, formData);
-		fetch(cgiURLauth, {
-			method: 'POST',
-			mode: 'cors',
-			redirect: 'follow',
-			credentials: 'include',
-			//headers: {'Content-type': 'application/x-www-form-urlencoded'},
-			body: formData
-		  })
-		  .then(function(response) {return response.json();})
-		  .catch(console.error)
-		  .then(function(response) {
-			  console.log('Success:', response);
-			  //location.href = 'catalogue.html';
-		});
+		Promise.all(arr)
+			.then(function(arr) {
+				console.log('Promise.all', arr)
+				for (var i = 0, len = arr.length; i < len; i++) {
+					var it = arr[i];
+					formData.append(it.name, it.file);
+				}
+				fetch(cgiURLauth, {
+					method: 'POST',
+					mode: 'cors',
+					redirect: 'follow',
+					credentials: 'include',
+					body: formData
+				  })
+				  .then(function(response) {return response.json();})
+				  .catch(console.error)
+				  .then(function(response) {
+					  console.log('Success:', response);
+					  //location.href = 'catalogue.html';
+				});
+		
+			}, function() {
+				console.log('err', arguments)
+			});
 	},
 
 	_getImageItem: function(remove) {
@@ -1328,14 +1419,20 @@ var Galer = {
 		myAttr.dopFiles = myAttr.dopFiles || {};
 		var images = myAttr.profile.pdata.images,
 			len = files.length,
+			flag = false,
 			activeImage = images.length + Object.keys(myAttr.dopFiles).length + (len ? 1 : 0);
 		for (var i = 0; i < len; i++) {
-			var file = files[i],
-				key = file.name + '_' + file.size + '_' + file.lastModified;
-			myAttr.dopFiles[key] = {
-				file: file
-			};
+			var file = files[i];
+			if (file.size) { //  && file.size < 3000000
+				myAttr.dopFiles[file.name + '_' + file.size + '_' + file.lastModified] = {
+					file: file
+				};
+				flag = true;
+			// } else {
+			// 	Galer._resizeImage(file, activeImage);
+			}
 		}
+		//if (flag)
 		Galer._refreshImages(images, activeImage);
 	},
 	_changeProfileImage: function(ev) {
@@ -1345,25 +1442,31 @@ var Galer = {
 	_setActiveProfileImage: function(node) {
 		var title = node.title;
 		var arr = /\d+/.exec(title),
-			imgNode = Util.getNode('rb-src-jpg1', detail);
+			imgNode = Util.getNode('rb-src-jpg2', detail);
 		if (arr && arr.length) {
 			var nm = Number(arr[0]);
 			myAttr.activeImage = nm;
 			var detail = Util.getNode('rb-item-detail'),
 				images = myAttr.profile.pdata.images,
-				rbImages = Util.getNode('rb-images', detail);
+				rbImages = Util.getNode('rb-images', detail),
+				activeImageItem = images[nm - 1];
 
 			if (nm > images.length) {
-				var file = myAttr.dopFiles[node.attributes['data-key'].value].file;
+				activeImageItem = myAttr.dopFiles[node.attributes['data-key'].value];
 				var reader = new FileReader();
-				reader.onload = function (e) {imgNode.src = e.target.result;};
-				reader.readAsDataURL(file);
+				reader.onload = function (e) {
+					imgNode.src = e.target.result;
+					Util._setTransform(activeImageItem, Util.getNode('rb-src-jpg2', Util.getNode('rb-item-detail')));
+				};
+				reader.readAsDataURL(activeImageItem.file);
 			} else {
 				imgNode.src = host + '/' + images[nm - 1].src;
+				Util._setTransform(activeImageItem, Util.getNode('rb-src-jpg2', Util.getNode('rb-item-detail')));
 			}
 			for (var i = 0, len = rbImages.children.length; i < len; i++) {
 				L.DomUtil[(myAttr.activeImage == i + 1 ? 'addClass' : 'removeClass')](rbImages.children[i], 'ant-pagination-item-active');
 			}
+
 		} else {
 			imgNode.src = 'css/img/blankm.jpg';
 		}
@@ -1394,8 +1497,9 @@ var Galer = {
 			Galer.rbItemDetail = Util.getNodes('rb-item-detail')[0];
 		}
 		Galer._curNum = onum;
+		var usr = myAttr.urlParams.par.usr || auth.usr;
 		if (!Galer.rbPhotoCatalog) {
-			location.href = 'catalogue.html?usr=' + auth.usr + '&to=' + onum;
+			location.href = 'catalogue.html?usr=' + usr + '&to=' + onum;
 			// Galer.getPage(null, onum);
 			return true;
 		}
@@ -1410,7 +1514,7 @@ var Galer = {
 			Galer._putHref('http://russianbrides.com.au/maps/myLocation.html?ip=' + it.ip, 'rb-href-url', Galer.rbItemDetail);
 		} else {
 			if (Util.urlParams.par.to) {
-				location.href = 'catalogue.html?usr=' + auth.usr;
+				location.href = 'catalogue.html?usr=' + usr;
 				return true;
 			}
 			L.DomUtil.addClass(rbItemDetail, 'collapse');

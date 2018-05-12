@@ -1,6 +1,45 @@
 .rb-main .collapse {
 	display: none;
 }
+.rb-main .svgIcon {
+	fill: red;
+    height: 24px;
+    width: 24px;
+    margin-left: 4px;
+    margin-right: 4px;
+    margin-top: 4px;
+    pointer-events: none;
+}
+.svgIcon.green {
+    padding-bottom: 5px;
+    margin-bottom: -8px;
+    fill: chartreuse;
+}
+.svgIcon.rounded {
+    background-color: white;
+    border-radius: 12px;
+    border: 2px solid lightgreen;
+	margin-bottom: -2px;
+}
+.rb-main div.arrow .svgIcon {
+    margin: 10px;
+    fill: white;
+    background-color: blue;
+    border-radius: 12px;
+    border: 4px solid white;
+    padding: 1px;
+}
+.rb-main div.arrow.left {
+    left: 10px;
+}
+.rb-main div.arrow.right {
+    right: 10px;
+}
+.rb-main div.arrow {
+    position: absolute;
+    top: 50%;
+    cursor: pointer;
+}
 .rb-pointer {
 	cursor: pointer;
 	color: gray;
@@ -35,6 +74,9 @@
 }
 .rb-sub-title {
     font-size: initial;
+}
+.rb-pagination-row {
+	z-index: 1;
 }
 .rb-pagination-row .ant-table-pagination {
 	text-align: center;
@@ -155,7 +197,6 @@
 	font-weight: bold;
 }
 .rb-line-after:after {
-    /* background-color: #20b38d; */
     content: '';
     display: block;
     height: 3px;
@@ -217,7 +258,7 @@
 }
 .rb-servise h3 {
     text-align: left;
-    padding-left: 30px;
+/*    padding-left: 30px;*/
     padding-top: 2px;
 }
 .rb-title {
@@ -350,6 +391,10 @@
     margin-left: 15px;
     margin-right: 15px;
 }
+.pdt26 {
+    padding-top: 26px;
+}
+    
 .bgw {
 	background-color: white;
 }
@@ -481,8 +526,17 @@
 li.ant-pagination-prev.rb-button.cmdSaveProfile {
     width: 110px;
 }
+a.btn.btn-secondary.btn-block {
+	padding: 10px 8px 10px 8px;
+	text-align: center;
+}
+.rb-dark .navbar-nav > li.hover a {
+  background-color: transparent;
+  color: #20b38d;
+}
 
 /*
+  color: #20b38d;
 @media (min-width: 992px) {
 	.col-md-3 {
 		width: 20%;
