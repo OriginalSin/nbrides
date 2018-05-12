@@ -41,7 +41,9 @@ var localeUtils = {
 		return false;
 	},
 	getUrlParams: function() {
-		var out = {par: {}};
+		var out = {
+			par: {}
+		};
 		if (location.search) {
 			var arr = location.search.split('&'),
 				len = arr.length;
@@ -55,6 +57,8 @@ var localeUtils = {
 				if (pv.length > 1) out.par[pv[0]] = pv[1];
 			}
 		}
+		var arr = location.pathname.match(/(\w+)\.html/);
+		if (arr.length > 1) out.page = arr[1];
 		return out;
 	}
 };
@@ -233,8 +237,8 @@ var translates = {
 var templates = {
 	'rb-header1': '<div class="container ">\
 			<div class="ant-radio-group ant-radio-group-large rb-float-left">\
-				<label data-usr="m" class="cmdFlag ant-radio-button-wrapper {mChecked}"><span class="ant-radio-button ant-radio-button-checked"><span class="ant-radio-button-inner"></span></span><span><img class="language-flag" src="css/img/au.png" alt="au" title="Australia"></span></label>\
-				<label data-usr="w" class="cmdFlag ant-radio-button-wrapper {wChecked}"><span class="ant-radio-button"><span class="ant-radio-button-inner"></span></span><span><img class="language-flag" src="css/img/ru.png" alt="ru" title="Russia"></span></label>\
+				<label data-usr="m" title="Australia" class="cmdFlag ant-radio-button-wrapper {mChecked}"><span class="ant-radio-button ant-radio-button-checked"><span class="ant-radio-button-inner"></span></span><span><img class="language-flag" src="css/img/au.png" alt="au"></span></label>\
+				<label data-usr="w" title="Russia" class="cmdFlag ant-radio-button-wrapper {wChecked}"><span class="ant-radio-button"><span class="ant-radio-button-inner"></span></span><span><img class="language-flag" src="css/img/ru.png" alt="ru"></span></label>\
 			</div>\
 			<div class="rb-cont-sign rb-float-right rb-signed-off">\
 				<span class="cmdRegister rb-float-left"><div class="fa fa-users"><span>Register</span></div></span>\
@@ -258,7 +262,7 @@ var templates = {
 			<a class="navbar-brand rb-vert-10" href="index.html?usr={usr}">\
 				<span class="logo-styled">\
 					<span class="logo-title">\
-						<img src="http://russianbrides.com.au/img/logo_big.gif" height="50" alt="" data-evernote-hover-show="true">\
+						<img src="css/img/logo_big.gif" height="50" alt="" data-evernote-hover-show="true">\
 					</span>\
 					<span class="logo-subtitle hidden-sm"></span>\
 				</span>\
@@ -266,13 +270,13 @@ var templates = {
 		</div>\
 		<div class="navbar-collapse navbar-main rb-menu-content collapse">\
 			<ul class="nav navbar-nav navbar-right rb-menu-button">\
-				<li class="menuparent"><a href="index.html?usr={usr}&onum={onum}">Home</a></li>\
-				<li class="menuparent"><a href="catalogue.html?usr={usr}">Catalogue</a></li>\
-				<li class="menuparent"><a href="service.html">Service and Prices</a></li>\
-				<li class="menuparent columns4"><a href="#">Contact</a>\
+				<li class="menuparent active_index"><a href="index.html?usr={usr}&onum={onum}">Home</a></li>\
+				<li class="menuparent active_catalogue"><a href="catalogue.html?usr={usr}">Catalogue</a></li>\
+				<li class="menuparent active_service"><a href="service.html">Service and Prices</a></li>\
+				<li class="menuparent columns4"><a href="#">Other</a>\
 					<ul>\
-						<li><a href="service.html">Service and Prices</a></li>\
-						<li><a href="listing-grid.html">Grid Version</a></li>\
+						<li><a href="profile.html?usr={usr}">Edit profile</a></li>\
+						<li><a href="#" data-usr="w" class="cmdFlag">Russian site ></a></li>\
 						<li><a href="listing-grid-filter.html">Grid + Filter</a></li>\
 						<li><a href="listing-row.html">Row Version</a></li>\
 						<li><a href="listing-row-filter.html">Row + Filter</a></li>\
@@ -837,6 +841,8 @@ var Util = {
 				str = templates[name],
 				dop = {};
 			dop[auth.usr + 'Checked'] = 'ant-radio-button-wrapper-checked';
+			str = str.replace('menuparent active_' + myAttr.urlParams.page, 'menuparent hover');
+
 			str = str.replace(/{(\w+)}/g, function(tmp, key) {
 				return auth[key] || dop[key] || '';
 			});

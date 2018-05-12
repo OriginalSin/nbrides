@@ -531,12 +531,12 @@ a.btn.btn-secondary.btn-block {
 	text-align: center;
 }
 .rb-dark .navbar-nav > li.hover a {
-  background-color: transparent;
-  color: #20b38d;
+  color: white;
 }
 
 /*
-  color: #20b38d;
+   background-color: transparent;
+ color: #20b38d;
 @media (min-width: 992px) {
 	.col-md-3 {
 		width: 20%;
