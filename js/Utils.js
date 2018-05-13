@@ -33,7 +33,7 @@ var localeUtils = {
 		return myLocale;
 	},
 	needProfile: function() {
-		var arr = ['profile.html'],
+		var arr = ['profile.html', 'catalogue.html', 'talk.html'],
 			len = arr.length;
 		for (var i = 0; i < len; i++) {
 			if (location.href.indexOf(arr[i]) > -1) {return true;}
@@ -58,7 +58,7 @@ var localeUtils = {
 			}
 		}
 		var arr = location.pathname.match(/(\w+)\.html/);
-		if (arr.length > 1) out.page = arr[1];
+		out.page = arr && arr.length > 1 ? arr[1] : 'index';
 		return out;
 	}
 };
@@ -235,6 +235,26 @@ var translates = {
 };
 
 var templates = {
+	'talk': '<div class="comment">\
+			<div class="comment-body {mycomment}">\
+				<div class="comment-picture">\
+					<div class="comment-picture-inner">\
+						<a href="#">\
+							<img class="rb-src-jpg2 talk-avatar" alt="" src="{avatar}">\
+						</a>\
+					</div>\
+				</div>\
+				<div class="comment-content">\
+					<div class="comment-meta">\
+						<h3 class="comment-title rb-item-pName colorw">{pName}</h3>\
+						<span class="comment-date">{date}</span> <span class="comment-subj colorw">{subj}</span>\
+					</div>\
+					<p class="comment-txt">{txt}</p>\
+				</div>\
+			</div>\
+		</div>\
+	',
+
 	'rb-header1': '<div class="container ">\
 			<div class="ant-radio-group ant-radio-group-large rb-float-left">\
 				<label data-usr="m" title="Australia" class="cmdFlag ant-radio-button-wrapper {mChecked}"><span class="ant-radio-button ant-radio-button-checked"><span class="ant-radio-button-inner"></span></span><span><img class="language-flag" src="css/img/au.png" alt="au"></span></label>\
@@ -252,10 +272,10 @@ var templates = {
 					</span>\
 				</li>\
 			</ul>\
-		</div>\
+			</div>\
 	',
 	'rb-nav': '<div class="navbar-header">\
-			<button type="button" class="navbar-toggle rb-menu-button" data-toggle="collapse" data-target=".navbar-main">\
+							<button type="button" class="navbar-toggle rb-menu-button" data-toggle="collapse" data-target=".navbar-main">\
 				<span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span>\
 				<span class="icon-bar"></span>\
 			</button>\
@@ -576,20 +596,24 @@ var Util = {
 		if (myAttr.profile && myAttr.profile.onum && !myAttr.profile.fname) {
 			alert('Your profile is empty - please edit your profile!');
 			location.href = 'profile.html?usr=' + auth.usr;
+		} else if (!myAttr.profile) {
+			Util._prpModal('signDialog', {needSign: true});
 		} else if (auth.usr === 'm' && !auth.op2) {
 			location.href = 'service.html?usr=' + auth.usr + '&onum=' + auth.onum;
-			//out = true;
 		} else {
-			Util._prpModal('signDialog', {needSign: true});
+			out = true;
 		}
-		
+
 		// console.log('_chkOpl', auth);
 		return out;
 	},
 	cmdTalk: function(ev) {
 		if (Util._chkOpl()) {
-			Util.cmdClose();
+			location.href = 'talk.html?usr=' + auth.usr + '&onum=' + auth.onum + '&to=' + B.Galer.activeItem.onum;
 		}
+	},
+	cmdSaveMessage: function(ev) {
+		Galer.saveMessage(ev);
 	},
 	cmdChangeImage: function(ev) {
 		var target = ev.target;
@@ -888,7 +912,7 @@ for (var i = 0, list = Util.getNodes('ant-input'), len = list.length; i < len; i
 	L.DomEvent.on(target, 'keypress', Util.onInputChange, Util);
 }
 
-['cmdTalk', 'cmdSaveProfile', 'cmdChangeImage', 'cmdImageDel', 'cmdZoomOut', 'cmdZoomIn', 'cmdRotate', 'cmdHerAddress', 'cmdRegister', 'cmdSign', 'cmdSignOut', 'cmdForgot', 'cmdFlag', 'cmdClose', 'cmdSave', 'cmdCheckbox'].forEach(function(name) {
+['cmdTalk', 'cmdSaveMessage', 'cmdSaveProfile', 'cmdChangeImage', 'cmdImageDel', 'cmdZoomOut', 'cmdZoomIn', 'cmdRotate', 'cmdHerAddress', 'cmdRegister', 'cmdSign', 'cmdSignOut', 'cmdForgot', 'cmdFlag', 'cmdClose', 'cmdSave', 'cmdCheckbox'].forEach(function(name) {
 	for (var i = 0, list = Util.getNodes(name), len = list.length; i < len; i++) {
 		var node = list[i];
 		L.DomEvent.on(node, 'click', Util[name] || console.log, Util);
@@ -1007,7 +1031,7 @@ var Galer = {
 		}
 		return len;
 	},
-	getPage: function(nm, to) {
+	getPage: function(nm, msg) {
 		nm = nm || 0;
 		var opt = {
 			options: {
@@ -1017,6 +1041,7 @@ var Galer = {
 			params: {
 				cmd: 'gal',
 				usr: myAttr.urlParams.par.usr || auth.usr,
+				page: myAttr.urlParams.page || '',
 				f: nm * 8,
 				byAge: 0
 			}
@@ -1024,8 +1049,15 @@ var Galer = {
 		if (myAttr.needProfile) {
 			opt.params.uAttr = 1;
 		}
+		if (myAttr.urlParams.page === 'talk') {
+			opt.params.charset = 'windows-1251';
+			if (msg) {
+				opt.params.msg = msg;
+			}
+		}
+
 		if (Util.urlParams.par.to) opt.params.nw = Util.urlParams.par.to;
-		var cont = Util.getNodes('galerList')[0];
+		var cont = Util.getNode('galerList');
 
 		return L.gmxUtil.requestJSONP(cgiURLauth, opt.params, {callbackParamName: 'callback'}).then(function(json) {
 			var galer = json.galer;
@@ -1072,28 +1104,71 @@ var Galer = {
 				// console.log('__', st);
 			});
 			// if (pagination) out.push(pagination);
-			if (!cont) {
-				return;
+			if (cont) {
+				cont.innerHTML = out.join('\n');
 			}
-			cont.innerHTML = out.join('\n');
 
 			if (Util.urlParams.par.to) {
 				Galer._showItem(Util.urlParams.par.to);
 			}
+
+			if (json.talk) {
+				out = [];
+				var lastDate = 0;
+				json.talk.arr.forEach(function(it) {
+// console.log('_talk_', it);
+					var fit = Galer.galer[it.f];
+					if (it.f === myAttr.profile.onum) {
+						fit =  myAttr.profile;
+						it.mycomment = 'pdl32';
+					}
+
+					var tit = it.t === myAttr.profile.onum ? myAttr.profile : Galer.galer[it.t];
+					var userHash = Galer.galer[it.onum];
+					
+					it.txt = decodeURIComponent(it.txt);
+					it.avatar = fit.pdata.images[0].src;
+					it.date = (new Date(it.pTime * 1000)).toLocaleString();
+// console.log('_talk_', it.txt);
+					if (lastDate < it.pTime) lastDate = it.pTime;
+					var st = templates.talk;
+					st = st.replace(/{(\w+)}/g, function(match, contents, offset, input_string) {
+						return it[contents] || fit[contents] || '';
+					});
+					out.push(st);
+				});
+				Galer._putHref('catalogue.html?usr=' + opt.params.usr + '&to=' + opt.params.nw, 'rb-href-url', Util.getNode('rb-talk'));
+				
+				Util.getNode('rb-talk-content').innerHTML = out.join('\n');
+				Util.getNode('rb-talk-count').innerHTML = json.talk.count;
+				Util.getNode('rb-talk-post-last').innerHTML = (new Date(lastDate * 1000)).toLocaleString();
+			}
 		});
 	},
+	saveMessage: function(ev) {
+		var textarea = ev.target.parentNode.parentNode['txt'];
+		Galer.getPage(null, encodeURIComponent(textarea.value));
+		textarea.value = '';
+	},
+
 	galer: {},
 	templItem: '',
 	rbPhotoCatalog: null,
 	rbItemDetail: null,
-	_putImageSrc: function(it, node, nm) {
-		nm = nm || 2;
-		node = node || Galer.rbItemDetail;
-		var jpg = '_jpg' + nm,
-			zn = it[jpg] || it.pdata[jpg] || it.pdata._jpg1,
-			node1 = Util.getNode('rb-src-jpg2', node);
+	//_putProfileImageSrc
+	_putImageSrc: function(it, node, nm, name) {
+		it = it || myAttr.profile;
+		if (it.pdata) {
+			node = node || Galer.rbItemDetail;
+			nm = nm || 2;
+			name = name || 'rb-src-jpg2';
+			var jpg = '_jpg' + nm,
+				zn = it[jpg] || it.pdata[jpg] || it.pdata._jpg1,
+				node1 = Util.getNode(name, node);
 
-		if (node1) {node1.src = zn ? host + '/' + zn : './css/img/blank' + it.usr + '.jpg';}
+			if (it.pdata.images) {zn = it.pdata.images[nm - 1].src}
+			if (node1) {node1.src = zn ? host + '/' + zn : './css/img/blank' + it.usr + '.jpg';}
+		}
 	},
 	_putHref: function(zn, className, node) {
 		node = node || Galer.rbItemDetail;
@@ -1241,39 +1316,8 @@ var Galer = {
 				canvas.toBlob(function (blob) {
 					resolve({blob: blob, name: name});
 				}, 'image/jpeg');
-				/*	canvas.toBlob(function (blob) {
-						//var reader1 = new FileReader();
-					myAttr.dopFiles[file.name + '_' + file.size + '_' + file.lastModified] = {
-						file: blob
-					};
-					//reader1.readAsBinaryString(blob);
-					Galer._refreshImages(myAttr.profile.pdata.images, activeImage);
-				}, 'image/jpeg');*/
 			};
 		});
-
-/*
-		var canvas = L.DomUtil.create('canvas'),
-			sl = (632 - img.naturalWidth) / 2,
-			st = (948 - img.naturalHeight) / 2,
-			sc = Math.min(948 / img.naturalHeigh, 632 / img.naturalWidth),
-			asp = 632 / 948;
-
-		canvas.width = 632;
-		canvas.height = 948; // / aspectRatio;
-		canvas.getContext('2d').drawImage(img, sl, st, img.naturalWidth * sc, img.naturalHeigh * sc, 0, 0, 632, 948);
-		var reader = new FileReader();
-		return
-		canvas.toBlob(function (blob) {
-			var reader = new FileReader();
-		  
-			reader.onloadend = function () {
-			  console.log(reader.result);
-			}
-		  
-			reader.readAsBinaryString(blob);
-		  });
-		  */
 	},
 
 	saveProfile: function() {
@@ -1506,7 +1550,6 @@ var Galer = {
 		var usr = myAttr.urlParams.par.usr || auth.usr;
 		if (!Galer.rbPhotoCatalog) {
 			location.href = 'catalogue.html?usr=' + usr + '&to=' + onum;
-			// Galer.getPage(null, onum);
 			return true;
 		}
 		var rbPhotoCatalog = Galer.rbPhotoCatalog,
@@ -1515,6 +1558,7 @@ var Galer = {
 		if (it) {
 			Galer._putItem(it);
 			Galer._putImageSrc(it);
+			Galer._putImageSrc(null, null, 1, 'rb-profile-src-0');
 			L.DomUtil.addClass(rbPhotoCatalog, 'collapse');
 			L.DomUtil.removeClass(rbItemDetail, 'collapse');
 			Galer._putHref('http://russianbrides.com.au/maps/myLocation.html?ip=' + it.ip, 'rb-href-url', Galer.rbItemDetail);

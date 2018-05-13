@@ -543,3 +543,14 @@ a.btn.btn-secondary.btn-block {
 	}
 }
 */
+
+.rb-dark .page-header:after {
+    background: rgba(255, 255, 255, 0.7);
+}
+.rb-dark .talk-avatar {
+    width: 56px;
+}
+
+.page-header.center {
+	margin-bottom: 0px;
+}
