@@ -1146,7 +1146,7 @@ var Galer = {
 		});
 	},
 	saveMessage: function(ev) {
-		var textarea = ev.target.parentNode.parentNode['txt'];
+		var textarea = ev.currentTarget.parentNode.parentNode['txt'];
 		Galer.getPage(null, encodeURIComponent(textarea.value));
 		textarea.value = '';
 	},
