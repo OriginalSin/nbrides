@@ -76,7 +76,6 @@ var host = '//russianbrides.com.au',
 	auth = {
 		usr: myAttr.urlParams.par.usr || myAttr.myLocale.usr || 'm'
 	};
-// var prefixURL = 'http://russianbrides.com.au/cgi/nserv.pl';
 			
 var translates = {
 	country: {
@@ -459,7 +458,7 @@ var templates = {
 						</tr></tbody>\
 					</table>\
 				</div>\
-				<img src="' + host + '/__jpg2_" alt="" onerror="this.src=\'./css/img/blank_gender_.jpg\'; this.onerror=\'\';" class="rb-image-zoom" onum="_onum_" gender="_gender_">\
+				<img src="__jpg2_" alt="" onerror="this.src=\'./css/img/blank_gender_.jpg\'; this.onerror=\'\';" class="rb-image-zoom" onum="_onum_" gender="_gender_">\
 			</div>\
 			<div class="box-body">\
 				<h2 class="box-title-plain">_pName_</h2>\
@@ -1092,7 +1091,7 @@ var Galer = {
 					addru = it.pdata.country + ', ' + it.pdata.city;
 				}
 				it.address = addru + '<br>' + it.fullname;
-				it.talk = host + '/talk.html?usr=' + it.gender + '&onum=' + it.onum + '&ns=' + it.onum;
+				it.talk = 'talk.html?usr=' + it.gender + '&onum=' + it.onum + '&ns=' + it.onum;
 				it.langName = opt.params.usr === 'w' ? 'Russian' : 'English';
 				
 				var st = templates.galer1;
@@ -1166,8 +1165,10 @@ var Galer = {
 				zn = it[jpg] || it.pdata[jpg] || it.pdata._jpg1,
 				node1 = Util.getNode(name, node);
 
-			if (it.pdata.images) {zn = it.pdata.images[nm - 1].src}
-			if (node1) {node1.src = zn ? host + '/' + zn : './css/img/blank' + it.usr + '.jpg';}
+			if (it.pdata.images) {
+				zn = it.pdata.images[nm - 1] ? it.pdata.images[nm - 1].src : zn;
+			}
+			if (node1) {node1.src = zn ? zn : './css/img/blank' + it.usr + '.jpg';}
 		}
 	},
 	_putHref: function(zn, className, node) {
@@ -1290,7 +1291,7 @@ var Galer = {
 		} else if (nm < 0) {
 			nm = images.length - 1;
 		}
-		imgNode.src = host + '/' + images[nm].src;
+		imgNode.src = images[nm].src;
 		Galer.activeImage = nm;
 	},
 	_resizeImage: function(file, name) {
@@ -1510,7 +1511,7 @@ var Galer = {
 				};
 				reader.readAsDataURL(activeImageItem.file);
 			} else {
-				imgNode.src = host + '/' + images[nm - 1].src;
+				imgNode.src = images[nm - 1].src;
 				Util._setTransform(activeImageItem, Util.getNode('rb-src-jpg2', Util.getNode('rb-item-detail')));
 			}
 			for (var i = 0, len = rbImages.children.length; i < len; i++) {
