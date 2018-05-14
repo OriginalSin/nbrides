@@ -1158,7 +1158,7 @@ var Galer = {
 	//_putProfileImageSrc
 	_putImageSrc: function(it, node, nm, name) {
 		it = it || myAttr.profile;
-		if (it.pdata) {
+		if (it && it.pdata) {
 			node = node || Galer.rbItemDetail;
 			nm = nm || 2;
 			name = name || 'rb-src-jpg2';
